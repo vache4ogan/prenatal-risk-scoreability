@@ -1,0 +1,13 @@
+year,derived_column,present_in_source,compared_n,mismatch_n,status,note
+2022,is_us_resident,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2022,is_singleton,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2022,target_preterm,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2022,target_nicu,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2022,target_lbw,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2022,target_gdm,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2023,is_us_resident,False,0,0,NOT_PRESENT,Source value is diagnostic only; output is always recomputed.
+2023,is_singleton,True,3605081,0,PASS,Source value is diagnostic only; output is always recomputed.
+2023,target_preterm,True,3605081,0,PASS,Source value is diagnostic only; output is always recomputed.
+2023,target_nicu,True,3605081,0,PASS,Source value is diagnostic only; output is always recomputed.
+2023,target_lbw,True,3605081,0,PASS,Source value is diagnostic only; output is always recomputed.
+2023,target_gdm,True,3605081,0,PASS,Source value is diagnostic only; output is always recomputed.

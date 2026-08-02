@@ -1,0 +1,13 @@
+target,feature_set,model,evaluation,budget_fraction_of_full_population,care_entry_group,group_population_n,event_n,early_selected_n,full_selected_n,additional_selected_n_full_minus_early,early_true_positive_n,full_true_positive_n,additional_true_positives_full_minus_early
+target_preterm,booking_strict,lightgbm,temporal_test_2023,0.1,months_1_3,2601060,217632,348038,231073,-116965,57043,42593,-14450
+target_preterm,booking_strict,lightgbm,temporal_test_2023,0.1,after_month_3,739298,58282,0,90332,90332,0,14343,14343
+target_preterm,booking_strict,lightgbm,temporal_test_2023,0.1,no_prenatal_care,76520,17387,0,16243,16243,0,5330,5330
+target_preterm,booking_strict,lightgbm,temporal_test_2023,0.1,unknown,63504,9700,0,10390,10390,0,2598,2598
+target_nicu,booking_strict,lightgbm,temporal_test_2023,0.1,months_1_3,2597274,214174,347658,242461,-105197,53897,41611,-12286
+target_nicu,booking_strict,lightgbm,temporal_test_2023,0.1,after_month_3,738055,65142,0,81040,81040,0,13876,13876
+target_nicu,booking_strict,lightgbm,temporal_test_2023,0.1,no_prenatal_care,77422,15194,0,14109,14109,0,4393,4393
+target_nicu,booking_strict,lightgbm,temporal_test_2023,0.1,unknown,63833,8775,0,10048,10048,0,2288,2288
+target_lbw,booking_strict,lightgbm,temporal_test_2023,0.1,months_1_3,2600093,169152,348032,225914,-122118,50112,36611,-13501
+target_lbw,booking_strict,lightgbm,temporal_test_2023,0.1,after_month_3,738893,54066,0,96119,96119,0,15254,15254
+target_lbw,booking_strict,lightgbm,temporal_test_2023,0.1,no_prenatal_care,77325,12870,0,16118,16118,0,4390,4390
+target_lbw,booking_strict,lightgbm,temporal_test_2023,0.1,unknown,64005,7688,0,9881,9881,0,2213,2213

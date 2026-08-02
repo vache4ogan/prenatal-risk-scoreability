@@ -1,0 +1,55 @@
+year,target,target_label,flow_order,step,is_primary_analysis_cohort,n_records,target_known_n,target_missing_n,event_n,event_rate_pct_among_known,population_coverage_pct_of_full_cohort,event_capture_pct_of_full_cohort_events,early_entry_max_month,definition
+2022,target_preterm,Preterm birth (<37 completed OE weeks),10,all_records,0,3676029,3673224,2805,381231,10.37864829370602,,,3,All occurrence-file records.
+2022,target_preterm,Preterm birth (<37 completed OE weeks),20,us_residents,0,3667758,3665087,2671,380548,10.383055027070299,,,3,"residence_status in {1,2,3}."
+2022,target_preterm,Preterm birth (<37 completed OE weeks),30,us_resident_singletons,0,3550380,3547741,2639,307562,8.66923487368441,,,3,U.S. residents with plurality=1; primary population before target-availability filtering.
+2022,target_preterm,Preterm birth (<37 completed OE weeks),40,target_missing_excluded,0,2639,0,2639,0,,,,3,Primary population records with unknown target; excluded from target-specific modelling.
+2022,target_preterm,Preterm birth (<37 completed OE weeks),50,full_cohort,1,3547741,3547741,0,307562,8.66923487368441,100.0,100.0,3,"U.S.-resident singleton births with known target, regardless of prenatal-care entry."
+2022,target_preterm,Preterm birth (<37 completed OE weeks),60,early_entry,1,2671654,2671654,0,221566,8.293214615365612,75.30577908590283,72.03945871076401,3,Full cohort with prenatal care beginning between month 1 and the configured early-entry maximum.
+2022,target_preterm,Preterm birth (<37 completed OE weeks),70,later_entry,0,727408,727408,0,57664,7.927325517453753,20.503413298772372,18.74874009142872,3,Full cohort with prenatal care beginning after the configured early-entry maximum through month 10.
+2022,target_preterm,Preterm birth (<37 completed OE weeks),80,no_care,0,73709,73709,0,16945,22.98905154051744,2.07763193536394,5.509458255571235,3,Full cohort with prenatal_care_month=0.
+2022,target_preterm,Preterm birth (<37 completed OE weeks),90,unknown_care,0,74970,74970,0,11387,15.18874216353208,2.113175679960854,3.702342942236037,3,Full cohort with unknown prenatal_care_month.
+2022,target_nicu,NICU admission,10,all_records,0,3676029,3668920,7109,348152,9.48922298660096,,,3,All occurrence-file records.
+2022,target_nicu,NICU admission,20,us_residents,0,3667758,3660748,7010,347580,9.494780848067116,,,3,"residence_status in {1,2,3}."
+2022,target_nicu,NICU admission,30,us_resident_singletons,0,3550380,3543543,6837,298503,8.423857139591647,,,3,U.S. residents with plurality=1; primary population before target-availability filtering.
+2022,target_nicu,NICU admission,40,target_missing_excluded,0,6837,0,6837,0,,,,3,Primary population records with unknown target; excluded from target-specific modelling.
+2022,target_nicu,NICU admission,50,full_cohort,1,3543543,3543543,0,298503,8.423857139591647,100.0,100.0,3,"U.S.-resident singleton births with known target, regardless of prenatal-care entry."
+2022,target_nicu,NICU admission,60,early_entry,1,2667311,2667311,0,211274,7.920861121931413,75.27243213924595,70.77784812882953,3,Full cohort with prenatal care beginning between month 1 and the configured early-entry maximum.
+2022,target_nicu,NICU admission,70,later_entry,0,726286,726286,0,62734,8.637644123664781,20.49604026252821,21.016204192252673,3,Full cohort with prenatal care beginning after the configured early-entry maximum through month 10.
+2022,target_nicu,NICU admission,80,no_care,0,74710,74710,0,14581,19.516798286708607,2.1083418488219277,4.8847080263849945,3,Full cohort with prenatal_care_month=0.
+2022,target_nicu,NICU admission,90,unknown_care,0,75236,75236,0,9914,13.177202403104896,2.1231857494039157,3.3212396525328054,3,Full cohort with unknown prenatal_care_month.
+2022,target_lbw,Low birth weight (<2500 g),10,all_records,0,3676029,3672945,3084,315904,8.600836658321864,,,3,All occurrence-file records.
+2022,target_lbw,Low birth weight (<2500 g),20,us_residents,0,3667758,3664768,2990,315288,8.603218539345464,,,3,"residence_status in {1,2,3}."
+2022,target_lbw,Low birth weight (<2500 g),30,us_resident_singletons,0,3550380,3547668,2712,248745,7.011507277456628,,,3,U.S. residents with plurality=1; primary population before target-availability filtering.
+2022,target_lbw,Low birth weight (<2500 g),40,target_missing_excluded,0,2712,0,2712,0,,,,3,Primary population records with unknown target; excluded from target-specific modelling.
+2022,target_lbw,Low birth weight (<2500 g),50,full_cohort,1,3547668,3547668,0,248745,7.011507277456628,100.0,100.0,3,"U.S.-resident singleton births with known target, regardless of prenatal-care entry."
+2022,target_lbw,Low birth weight (<2500 g),60,early_entry,1,2670591,2670591,0,173294,6.4889756611925975,75.27736530024794,69.66732999658285,3,Full cohort with prenatal care beginning between month 1 and the configured early-entry maximum.
+2022,target_lbw,Low birth weight (<2500 g),70,later_entry,0,726981,726981,0,53740,7.392215202323031,20.491799119872546,21.604454360891676,3,Full cohort with prenatal care beginning after the configured early-entry maximum through month 10.
+2022,target_lbw,Low birth weight (<2500 g),80,no_care,0,74670,74670,0,12701,17.00950850408464,2.104762903405843,5.106032282055921,3,Full cohort with prenatal_care_month=0.
+2022,target_lbw,Low birth weight (<2500 g),90,unknown_care,0,75426,75426,0,9010,11.945482989950415,2.1260726764736724,3.622183360469557,3,Full cohort with unknown prenatal_care_month.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),10,all_records,0,3605081,3602293,2788,374643,10.400125697715316,,,3,All occurrence-file records.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),20,us_residents,0,3596017,3593375,2642,373902,10.405315337252583,,,3,"residence_status in {1,2,3}."
+2023,target_preterm,Preterm birth (<37 completed OE weeks),30,us_resident_singletons,0,3482971,3480382,2589,303001,8.705969632069124,,,3,U.S. residents with plurality=1; primary population before target-availability filtering.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),40,target_missing_excluded,0,2589,0,2589,0,,,,3,Primary population records with unknown target; excluded from target-specific modelling.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),50,full_cohort,1,3480382,3480382,0,303001,8.705969632069124,100.0,100.0,3,"U.S.-resident singleton births with known target, regardless of prenatal-care entry."
+2023,target_preterm,Preterm birth (<37 completed OE weeks),60,early_entry,1,2601060,2601060,0,217632,8.367050356393163,74.73489978973572,71.8255055263844,3,Full cohort with prenatal care beginning between month 1 and the configured early-entry maximum.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),70,later_entry,0,739298,739298,0,58282,7.8834245459882215,21.24186368048105,19.23492001676562,3,Full cohort with prenatal care beginning after the configured early-entry maximum through month 10.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),80,no_care,0,76520,76520,0,17387,22.722164140094094,2.19860923312441,5.738264890214884,3,Full cohort with prenatal_care_month=0.
+2023,target_preterm,Preterm birth (<37 completed OE weeks),90,unknown_care,0,63504,63504,0,9700,15.274628369866464,1.824627296658815,3.2013095666350937,3,Full cohort with unknown prenatal_care_month.
+2023,target_nicu,NICU admission,10,all_records,0,3605081,3598429,6652,352498,9.795885926886427,,,3,All occurrence-file records.
+2023,target_nicu,NICU admission,20,us_residents,0,3596017,3589483,6534,351804,9.800965765821987,,,3,"residence_status in {1,2,3}."
+2023,target_nicu,NICU admission,30,us_resident_singletons,0,3482971,3476584,6387,303285,8.72364942138605,,,3,U.S. residents with plurality=1; primary population before target-availability filtering.
+2023,target_nicu,NICU admission,40,target_missing_excluded,0,6387,0,6387,0,,,,3,Primary population records with unknown target; excluded from target-specific modelling.
+2023,target_nicu,NICU admission,50,full_cohort,1,3476584,3476584,0,303285,8.72364942138605,100.0,100.0,3,"U.S.-resident singleton births with known target, regardless of prenatal-care entry."
+2023,target_nicu,NICU admission,60,early_entry,1,2597274,2597274,0,214174,8.246107264770679,74.70764405519901,70.61806551593386,3,Full cohort with prenatal care beginning between month 1 and the configured early-entry maximum.
+2023,target_nicu,NICU admission,70,later_entry,0,738055,738055,0,65142,8.826171491284525,21.22931590319693,21.47880706266383,3,Full cohort with prenatal care beginning after the configured early-entry maximum through month 10.
+2023,target_nicu,NICU admission,80,no_care,0,77422,77422,0,15194,19.624912815478805,2.2269561155433033,5.009809255320903,3,Full cohort with prenatal_care_month=0.
+2023,target_nicu,NICU admission,90,unknown_care,0,63833,63833,0,8775,13.746808077326774,1.836083926060754,2.8933181660814085,3,Full cohort with unknown prenatal_care_month.
+2023,target_lbw,Low birth weight (<2500 g),10,all_records,0,3605081,3602070,3011,308943,8.57681832946056,,,3,All occurrence-file records.
+2023,target_lbw,Low birth weight (<2500 g),20,us_residents,0,3596017,3593102,2915,308263,8.579300003172746,,,3,"residence_status in {1,2,3}."
+2023,target_lbw,Low birth weight (<2500 g),30,us_resident_singletons,0,3482971,3480316,2655,243776,7.004421437593598,,,3,U.S. residents with plurality=1; primary population before target-availability filtering.
+2023,target_lbw,Low birth weight (<2500 g),40,target_missing_excluded,0,2655,0,2655,0,,,,3,Primary population records with unknown target; excluded from target-specific modelling.
+2023,target_lbw,Low birth weight (<2500 g),50,full_cohort,1,3480316,3480316,0,243776,7.004421437593598,100.0,100.0,3,"U.S.-resident singleton births with known target, regardless of prenatal-care entry."
+2023,target_lbw,Low birth weight (<2500 g),60,early_entry,1,2600093,2600093,0,169152,6.505613453057256,74.7085322137415,69.38829088999738,3,Full cohort with prenatal care beginning between month 1 and the configured early-entry maximum.
+2023,target_lbw,Low birth weight (<2500 g),70,later_entry,0,738893,738893,0,54066,7.31716229548798,21.230629632481648,22.178557364137568,3,Full cohort with prenatal care beginning after the configured early-entry maximum through month 10.
+2023,target_lbw,Low birth weight (<2500 g),80,no_care,0,77325,77325,0,12870,16.64403491755577,2.221781010689834,5.27943686006826,3,Full cohort with prenatal_care_month=0.
+2023,target_lbw,Low birth weight (<2500 g),90,unknown_care,0,64005,64005,0,7688,12.011561596750253,1.839057143087007,3.153714885796797,3,Full cohort with unknown prenatal_care_month.

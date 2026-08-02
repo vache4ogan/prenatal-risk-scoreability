@@ -1,0 +1,4 @@
+target,feature_set,model,population,method,fit_n,fit_event_n,fit_prevalence,intercept,slope,optimizer_success,optimizer_method,optimizer_message
+target_preterm,booking_strict,lightgbm,singleton_primary,platt_sigmoid,354428,30674,0.08654508108840159,0.034995208060050666,1.0165872360427732,True,L-BFGS-B,CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH
+target_nicu,booking_strict,lightgbm,singleton_primary,platt_sigmoid,354021,29802,0.08418144686332167,0.07932496800418785,1.0346580320371637,True,L-BFGS-B,CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL
+target_lbw,booking_strict,lightgbm,singleton_primary,platt_sigmoid,354410,24817,0.07002341920374708,0.012612692269630384,1.005821768270068,True,L-BFGS-B,CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH

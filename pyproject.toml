@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prenatal-scoreability"
+version = "0.1.0"
+description = "Article-oriented fixed-model equal-budget prenatal scoreability analysis"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "clearml",
+  "python-dotenv",
+  "numpy",
+  "pandas",
+  "scipy",
+  "scikit-learn",
+  "lightgbm",
+  "PyYAML",
+  "joblib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+# Exact versions must be restored from the canonical ClearML
+# package_versions.txt artifact before a fully locked rerun.

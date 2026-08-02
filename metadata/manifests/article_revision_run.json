@@ -1,0 +1,131 @@
+{
+  "clearml_dataset_id": "062ba26c0ca24cef99549c2a2ab34e65",
+  "clearml_dataset_root": "<runtime-path-removed>",
+  "clearml_task_id": "29717840f05144579af240f6ded4852a",
+  "counts": {
+    "all_birth_model_count": 3,
+    "calibrator_count": 3,
+    "singleton_model_count": 3,
+    "temporal_prediction_pass_count": 6,
+    "total_model_count": 6
+  },
+  "design": {
+    "all_birth_dependency_caveat": "Multiple infant records may be dependent; pregnancy-level ID is unavailable.",
+    "bootstrap": {
+      "evaluations": [
+        "calibration_evaluation_2022",
+        "temporal_test_2023"
+      ],
+      "method": "paired full-size record-level nonparametric bootstrap",
+      "replicates": 500,
+      "same_resampled_records_for_early_and_full": true,
+      "top_b_recomputed_in_each_replicate": true
+    },
+    "calibration_method": "platt_sigmoid",
+    "calibrator_fit_on_cdc2022_only": true,
+    "cdc2023_role": "temporal_test",
+    "cdc2023_used_for_calibrator_fit": false,
+    "cdc2023_used_for_model_training": false,
+    "cdc2023_used_for_threshold_selection": false,
+    "class_weighting": false,
+    "cohort_specific_refitting": false,
+    "early_entry_definition": "prenatal_care_month in months 1 through 3",
+    "feature_sets": [
+      "booking_strict"
+    ],
+    "fixed_absolute_budget_fractions": [
+      0.05,
+      0.1
+    ],
+    "hyperparameter_optimization": false,
+    "mechanism_budget_fraction": 0.1,
+    "model": "lightgbm",
+    "model_device_type": "cpu",
+    "oversampling": false,
+    "primary_population": "U.S.-resident singleton births",
+    "sensitivity_population": "U.S.-resident births, all pluralities",
+    "single_fixed_model_per_target_population": true,
+    "targets": [
+      "target_preterm",
+      "target_nicu",
+      "target_lbw"
+    ]
+  },
+  "elapsed_seconds": 2952.3002648353577,
+  "git": {
+    "branch": null,
+    "commit_hash": null,
+    "dirty": null,
+    "required_for_remote_execution": false
+  },
+  "git_clone_required": false,
+  "inputs": {
+    "2022": {
+      "path": "<runtime-path-removed>",
+      "rows": 3676029,
+      "sha256": "c5f1ab62b0e9ac63795e75f6075d2523a3f4c5dc3e95c7aa1f7df6763205a59c"
+    },
+    "2023": {
+      "path": "<runtime-path-removed>",
+      "rows": 3605081,
+      "sha256": "82b38b24d2f795a4a5233ce3a2fcb43b70789339306ba9044bde56f50bb270a8"
+    }
+  },
+  "output_sha256": {
+    "all_births_fixed_budget_comparisons.csv": "a1d955b6a01f6706ba3e6d7727a009ba0de68801b1a4bfcbb4571c512a9f6471",
+    "all_births_fixed_budget_results.csv": "ffb85c8f040f83f45b23ac5c526f104a6e9df8a955209e54b9708bbdd2260cb8",
+    "article_revision_summary.md": "c920a14cd4050606d1d4f9b7d62b3011494322f89c31bee48dd99228dd33d801",
+    "commands.txt": "8896f5bf2a41913c07a358a6ff52a98736a1e2300e1f07cbdb6cecc4901dadea",
+    "experiment_config.locked.yaml": "afc1d8d1864b1c5ce6036eeff603123b8b6bb4fd70b6abc44fee7e446f9d1710",
+    "git_info.json": "e6602285ea404aee9bfd98a52b3b058668880e3dcb5dfe38e1e7c63c1d85bac0",
+    "lightgbm_calibration_metrics.csv": "0ea87a4bf7b3b638c3f1c8f02fa2fe22ea538a835ad0299c4c24c6ec24e9f3ba",
+    "lightgbm_platt_calibrators.csv": "8c1e010625f687db81e6c9712a7d97b55cabb51ae22ab6d07df3b25b5747cd3c",
+    "lightgbm_raw_vs_calibrated.csv": "456b99260f190b0bdafca4800589f7e130e6b573dc8be68abe15dac545f79edd",
+    "lightgbm_reliability_curve_points.csv": "5cecca7af9494e524e50e65f1471abb6c8a7271174e25a33dae07ff7a54969ec",
+    "mechanism_table_10pct.csv": "a96cd22d1e0e73f7873964d75aa4320df8c546c7b168e2ab443f8380e304e992",
+    "mechanism_table_10pct_comparisons.csv": "7006713ef6130bfc757fa90d718d1e886916bd55821006381f41d73a8712a0b0",
+    "package_versions.txt": "f44e9421155d0952dfcc41958faa7408684b90bf8c31ace7520660db50323ac8",
+    "paired_bootstrap_replicates.csv": "2122f970959425a01b2ecf4defb83d258ec49ff74fcbb5f0bd64512c1d43de2d",
+    "paired_bootstrap_summary.csv": "070cbd5a79f1770a508b7432bc565172b79b2217187fe0810a7a89aefe6dea91",
+    "reproducibility/code/run_article_revision_analyses_clearml.py": "c9dd2e3cb8a371d737414faf3c1b42f4d173da52d50ed65256b8f19732193580",
+    "reproducibility/configs/experiment_config_article_revision.locked.yaml": "afc1d8d1864b1c5ce6036eeff603123b8b6bb4fd70b6abc44fee7e446f9d1710",
+    "singleton_fixed_budget_comparisons.csv": "827a9f7014e34b58f3672fe944402ca5b9d90b6fde7d3c4a3fe01be270c6e6b7",
+    "singleton_fixed_budget_results.csv": "6db9c941e29826c95200b3ee7a835afefbdb8f670ce3c99332d495ae7211c8eb"
+  },
+  "outputs": {
+    "all_birth_comparison_rows": 6,
+    "all_birth_result_rows": 12,
+    "bootstrap_replicate_rows": 6000,
+    "bootstrap_summary_rows": 12,
+    "calibration_comparison_rows": 12,
+    "calibration_metric_rows": 24,
+    "mechanism_comparison_rows": 12,
+    "mechanism_rows": 24,
+    "reliability_curve_rows": 480,
+    "saved_models": [
+      "models/singleton__target_preterm__booking_strict__lightgbm_platt.joblib",
+      "models/singleton__target_nicu__booking_strict__lightgbm_platt.joblib",
+      "models/singleton__target_lbw__booking_strict__lightgbm_platt.joblib",
+      "models/all_births__target_preterm__booking_strict__lightgbm.joblib",
+      "models/all_births__target_nicu__booking_strict__lightgbm.joblib",
+      "models/all_births__target_lbw__booking_strict__lightgbm.joblib"
+    ],
+    "saved_predictions": [],
+    "singleton_comparison_rows": 12,
+    "singleton_fixed_budget_rows": 24
+  },
+  "split": {
+    "assigned_before_target_filters": true,
+    "calibration_evaluation_rows_all_2022": 368291,
+    "calibration_fraction": 0.2,
+    "calibrator_fit_fraction_within_calibration_pool": 0.5,
+    "calibrator_fit_rows_all_2022": 367106,
+    "partition_seed": 2028,
+    "seed": 2026,
+    "subsplits_disjoint": true,
+    "train_rows_all_2022": 2940632
+  },
+  "standalone_remote_execution": true,
+  "status": "PASS",
+  "public_sanitization_note": "Absolute runtime and cache paths were removed for repository publication."
+}
