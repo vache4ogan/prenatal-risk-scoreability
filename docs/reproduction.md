@@ -24,3 +24,20 @@ python scripts/experiments/run_article_revision_analyses_clearml.py --config con
 Expected article-facing outputs are the 12 files documented in `results/README.md`. Expected row counts are 24 singleton results, 12 singleton comparisons, 12 bootstrap summaries, 24 mechanism rows, 12 mechanism comparisons, 24 calibration metrics, 3 calibrators, 12 raw-versus-calibrated comparisons, 480 reliability-curve points, 12 all-birth results, and 6 all-birth comparisons. Verify output hashes against `metadata/manifests/article_revision_run.json`; the Markdown summary has no row count.
 
 The historical run has no Git branch, commit hash, or dirty-state identity. A future clean rerun should begin from a reviewed clean commit, restore exact package versions, verify both input hashes, run all validation tests, archive the full ClearML artifacts, compare output hashes and row counts, and record the resulting commit. After review, create an annotated article tag naming the canonical ClearML task and dataset IDs; push neither commit nor tag until a human approves them.
+
+## Canonical environment
+
+The canonical ClearML run used:
+
+- Python 3.12.3
+- ClearML 2.1.8
+- LightGBM 4.7.0
+- NumPy 2.4.6
+- Pandas 3.0.3
+- scikit-learn 1.8.0
+- SciPy 1.17.1
+- PyYAML 6.0.3
+- joblib 1.5.3
+
+The original environment snapshot is stored at
+`metadata/manifests/package_versions.txt`.

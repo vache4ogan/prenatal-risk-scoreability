@@ -279,7 +279,6 @@ Completed computation:
 
 The run stored the standalone script, locked configuration, command, package versions, input hashes, output hashes, result CSVs, serialized models, and run manifest.
 
-A clean Git commit, article-version tag, and single reproduction README still need to be added before submission.
 
 ---
 
