@@ -1,0 +1,4 @@
+Outcome,Full N,Early N,"Early eligible, %","Events, n (%)","Event ceiling, %",Budget B,"Early capture, %","Full capture, %","Full - early, pp (95% CI)",Additional TP
+Preterm delivery,3480382,2601060,74.735,"303,001 (8.71%)",71.826,348038,18.83,21.41,2.58 (2.47–2.70),7821
+NICU admission,3476584,2597274,74.708,"303,285 (8.72%)",70.618,347658,17.77,20.50,2.73 (2.62–2.84),8271
+Low birth weight,3480316,2600093,74.709,"243,776 (7.00%)",69.388,348032,20.56,23.98,3.43 (3.28–3.57),8356

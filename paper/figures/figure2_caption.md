@@ -1,0 +1,3 @@
+# Figure 2 caption
+
+**Figure 2. Difference in population event capture between full-cohort and early-entry eligibility under equal absolute referral budgets.** Points show the CDC 2023 temporal-test difference in population event capture (full minus early) for fixed `booking_strict` LightGBM models at target-specific budgets equal to 5% and 10% of the full evaluation population. Error bars show 95% paired full-size record-level bootstrap percentile intervals from 500 replicates; early and full policies were evaluated on identical resampled records and top-B was reconstructed within each replicate. Labels above the 10% estimates report the additional true-positive events captured by full-cohort eligibility.

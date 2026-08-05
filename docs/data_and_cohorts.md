@@ -17,4 +17,3 @@ Expected inputs are `data/cdc_temporal_harmonized/cdc_natality_2022_harmonized.c
 
 Early entry means prenatal-care entry in months 1–3. Target-specific missing outcomes are filtered independently, so target-specific denominators may differ. The same fixed model and absolute target-specific budget are used for early-entry and full-cohort policies.
 
-> TODO — verify that source prenatal-care unknown code 99 and blank values are normalized to missing before canonical grouping. The canonical analysis groups only non-finite values as unknown.
