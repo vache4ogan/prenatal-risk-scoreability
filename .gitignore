@@ -15,3 +15,4 @@ artifacts/
 *.zip
 .DS_Store
 repo_migration/
+paper_old/
