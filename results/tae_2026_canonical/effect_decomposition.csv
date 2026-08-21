@@ -1,0 +1,7 @@
+target,feature_set,model,evaluation,nominal_fraction,from_scenario,to_scenario,from_cohort_budget_n,to_cohort_budget_n,from_tp_at_from_budget,from_tp_at_to_budget,to_tp_at_to_budget,naive_top_fraction_effect,availability_effect_at_to_budget,capacity_effect_within_from_scenario,identity_error
+target_preterm,landmark_strict,lightgbm,temporal_test_2023,0.05,early_entry,all_record_upper_bound,130053,174019,27434,33618,37631,0.033653354279358824,0.013244180712274886,0.020409173567083938,0.0
+target_preterm,landmark_strict,lightgbm,temporal_test_2023,0.1,early_entry,all_record_upper_bound,260106,348038,44326,54216,61503,0.056689581882568035,0.024049425579453526,0.03264015630311451,0.0
+target_nicu,landmark_strict,lightgbm,temporal_test_2023,0.05,early_entry,all_record_upper_bound,129864,173829,25801,31795,35854,0.03314703991295316,0.013383451209258615,0.019763588703694546,0.0
+target_nicu,landmark_strict,lightgbm,temporal_test_2023,0.1,early_entry,all_record_upper_bound,259727,347658,42252,52160,59201,0.055884728885371826,0.02321578713091646,0.032668941754455366,0.0
+target_lbw,landmark_strict,lightgbm,temporal_test_2023,0.05,early_entry,all_record_upper_bound,130005,174016,23229,28918,32892,0.03963884877920715,0.01630185087949594,0.023336997899711207,0.0
+target_lbw,landmark_strict,lightgbm,temporal_test_2023,0.1,early_entry,all_record_upper_bound,260009,348032,39145,48505,55650,0.06770559858230507,0.029309694145445014,0.03839590443686006,0.0
