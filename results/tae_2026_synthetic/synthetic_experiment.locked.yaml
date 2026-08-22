@@ -1,0 +1,51 @@
+simulation:
+  seed: 2028
+  replicates: 100
+  population_n: 100000
+  calibration_n: 50000
+  progress_every: 10
+  outcome_prevalence: 0.1
+  outcome_risk_slope: 1.0
+  quadrature_nodes: 80
+  availability_fractions:
+  - 0.5
+  - 0.7
+  - 0.9
+  availability_associations:
+  - name: higher_risk_less_available
+    slope: -1.0
+  - name: risk_independent
+    slope: 0.0
+  - name: higher_risk_more_available
+    slope: 1.0
+  model_qualities:
+  - name: good
+    noise_sd: 0.5
+  - name: medium
+    noise_sd: 1.0
+  - name: weak
+    noise_sd: 2.0
+evaluation:
+  fractions:
+  - 0.05
+  - 0.1
+  - 0.2
+  scenarios:
+  - available_subset
+  - all_population
+  protocols:
+  - cohort_specific_top_fraction
+  - fixed_absolute_budget
+  - fixed_calibration_threshold
+  threshold_source: independent_calibration_all_population
+  threshold_comparator: '>='
+  tie_breaker_top_b: original_row_position_ascending
+  primary_metric: population_event_capture
+  primary_contrast: all_population_minus_available_subset
+  primary_distortion: cohort_specific_top_fraction_minus_fixed_absolute_budget
+output:
+  directory: results/tae_2026_synthetic
+  overwrite: false
+  save_replicate_level_results: true
+  save_summaries: true
+  save_manifest: true

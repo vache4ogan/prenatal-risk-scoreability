@@ -1,0 +1,76 @@
+simulation:
+  seed: 2028
+  replicates: 100
+  population_n: 100000
+  calibration_n: 50000
+  progress_every: 10
+
+  # Binary outcome: Y ~ Bernoulli(sigmoid(alpha + beta * Z)), Z ~ N(0,1).
+  # alpha is solved numerically so the marginal prevalence is 10% in expectation.
+  outcome_prevalence: 0.10
+  outcome_risk_slope: 1.0
+  quadrature_nodes: 80
+
+  # Expected fraction of the population that is available/scoreable.
+  availability_fractions:
+    - 0.50
+    - 0.70
+    - 0.90
+
+  # A ~ Bernoulli(sigmoid(gamma0 + gamma1 * Z)).
+  # gamma0 is solved separately for every target availability fraction so that
+  # E[A] matches the requested fraction. Relation is with latent pre-outcome risk,
+  # which induces the requested association between availability and outcome.
+  availability_associations:
+    - name: higher_risk_less_available
+      slope: -1.0
+    - name: risk_independent
+      slope: 0.0
+    - name: higher_risk_more_available
+      slope: 1.0
+
+  # Risk score: R = Z + noise_sd * epsilon, epsilon ~ N(0,1).
+  # Expected corr(R, Z) = 1/sqrt(1 + noise_sd^2).
+  model_qualities:
+    - name: good
+      noise_sd: 0.50
+    - name: medium
+      noise_sd: 1.00
+    - name: weak
+      noise_sd: 2.00
+
+evaluation:
+  fractions:
+    - 0.05
+    - 0.10
+    - 0.20
+
+  scenarios:
+    - available_subset
+    - all_population
+
+  protocols:
+    - cohort_specific_top_fraction
+    - fixed_absolute_budget
+    - fixed_calibration_threshold
+
+  # The threshold is chosen from an independent synthetic calibration population,
+  # never from the evaluation population, and then reused across both scenarios.
+  threshold_source: independent_calibration_all_population
+  threshold_comparator: ">="
+  tie_breaker_top_b: original_row_position_ascending
+
+  # Primary synthetic estimand:
+  # distortion = (all - available under cohort-specific top-q)
+  #            - (all - available under fixed absolute budget)
+  #            = extra-capacity component.
+  primary_metric: population_event_capture
+  primary_contrast: all_population_minus_available_subset
+  primary_distortion: cohort_specific_top_fraction_minus_fixed_absolute_budget
+
+output:
+  directory: results/tae_2026_synthetic
+  overwrite: false
+  save_replicate_level_results: true
+  save_summaries: true
+  save_manifest: true

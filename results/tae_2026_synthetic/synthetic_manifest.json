@@ -1,0 +1,119 @@
+{
+  "command": "scripts/experiments/run_tae_synthetic.py --config configs/canonical/synthetic_experiment.yaml",
+  "config_path": "/home/vache/Med_AI_lab/clear_research/configs/canonical/synthetic_experiment.yaml",
+  "config_sha256": "838d77a7ef5dab27eb6f7932622f9fe94e486a7aff167e2009e589182d0a4bab",
+  "created_at_utc": "2026-08-22T10:44:29.751882+00:00",
+  "design": {
+    "availability_associations": [
+      {
+        "name": "higher_risk_less_available",
+        "slope": -1.0
+      },
+      {
+        "name": "risk_independent",
+        "slope": 0.0
+      },
+      {
+        "name": "higher_risk_more_available",
+        "slope": 1.0
+      }
+    ],
+    "availability_fractions": [
+      0.5,
+      0.7,
+      0.9
+    ],
+    "calibration_n": 50000,
+    "evaluation_fractions": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "model_qualities": [
+      {
+        "name": "good",
+        "noise_sd": 0.5
+      },
+      {
+        "name": "medium",
+        "noise_sd": 1.0
+      },
+      {
+        "name": "weak",
+        "noise_sd": 2.0
+      }
+    ],
+    "outcome_prevalence_target": 0.1,
+    "outcome_risk_slope": 1.0,
+    "population_n": 100000,
+    "protocols": [
+      "cohort_specific_top_fraction",
+      "fixed_absolute_budget",
+      "fixed_calibration_threshold"
+    ],
+    "replicates": 100,
+    "scenarios": [
+      "available_subset",
+      "all_population"
+    ],
+    "seed": 2028,
+    "threshold_source": "independent_calibration_all_population",
+    "tie_breaker_top_b": "original_row_position_ascending"
+  },
+  "elapsed_seconds": 114.98673367500305,
+  "git": {
+    "branch": "main",
+    "commit_hash": "c4d79221764ffd3fc02610c9496a5a248a32e56a",
+    "dirty": true
+  },
+  "invariants": {
+    "decomposition_identity_within_tolerance": true,
+    "distortion_equals_capacity_component": true,
+    "protocol_A_exact_cohort_fraction_budget": true,
+    "protocol_B_exact_equal_absolute_budget": true,
+    "protocol_C_common_independent_calibration_threshold": true,
+    "same_population_event_denominator_across_scenarios": true,
+    "same_score_vector_across_availability_scenarios": true,
+    "tp_decomposition_identity_exact": true
+  },
+  "output_sha256": {
+    "synthetic_comparison_summary.csv": "b6e795ff16e342153f7469255c9106de3118807b25acf4875ab091e40a8a184a",
+    "synthetic_condition_replicates.csv": "cba34b40fea0a6c952bf784ad714d4f9642b5059ca54cecf079f30bc3d06debb",
+    "synthetic_decomposition.csv": "831c90d5d922520a90d9f5cb2f3d5b1d1b818627878ea15af6e6a2ed4d6fd1a7",
+    "synthetic_decomposition_summary.csv": "1fdea8abdebd65e7fb07ff397553e67b1dbccaa03c5726b651dd20c41ffc03a8",
+    "synthetic_experiment.locked.yaml": "9ec466e2d5bcec2104d56ed8fb5c73d2637773c8d76624cc2fab33fd00bf15a7",
+    "synthetic_protocol_comparisons.csv": "3e67395afda8473d4f829e6bf810c241cc9af88b1a0db8751efb3377ab6839f3",
+    "synthetic_protocol_results.csv": "983c8667fd34daf75a5bc724ca25aaa59c6ebeb04058bee247ad8209b11d5704",
+    "synthetic_summary.md": "e8bdcf775119dd9c3668e1882c3c7562fc6ee970538b98cd16d5d503ec840e7a"
+  },
+  "outputs": {
+    "comparison_rows": 24300,
+    "comparison_summary_rows": 243,
+    "condition_rows": 900,
+    "decomposition_rows": 8100,
+    "decomposition_summary_rows": 81,
+    "protocol_rows": 48600
+  },
+  "packages": {
+    "PyYAML": "6.0.3",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "python": "3.14.6"
+  },
+  "script_sha256": "d51f48e28012721df6fc54cbbdfff0fd14155d13cdd040c0bd855878b14ed237",
+  "solved_intercepts": {
+    "availability": {
+      "fraction=0.5|slope=-1.0": 0.0,
+      "fraction=0.5|slope=0.0": 0.0,
+      "fraction=0.5|slope=1.0": 0.0,
+      "fraction=0.7|slope=-1.0": 1.0184006519909872,
+      "fraction=0.7|slope=0.0": 0.8472978603867887,
+      "fraction=0.7|slope=1.0": 1.0184006519909872,
+      "fraction=0.9|slope=-1.0": 2.5642215001107616,
+      "fraction=0.9|slope=0.0": 2.197224577337238,
+      "fraction=0.9|slope=1.0": 2.5642215001107616
+    },
+    "outcome": -2.5642215001107616
+  },
+  "status": "PASS"
+}
