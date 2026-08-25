@@ -1,0 +1,69 @@
+analysis:
+  name: four_cell_symmetric_shapley_fixed_absolute_budget_bootstrap
+  script_version: 2026-08-24-v4-fixed-absolute-budget-bootstrap
+  source_canonical_task_id: 4f9d98dd39f3438181f48b256b23bd94
+  cdc2023_role: temporal evaluation cohort
+  model_refit: false
+  threshold_reestimation: false
+data:
+  cdc2023: data/cdc_temporal_harmonized/cdc_natality_2023_harmonized.csv
+  expected_rows_2023: 3605081
+  verify_input_hash: true
+  expected_sha256_2023: 82b38b24d2f795a4a5233ce3a2fcb43b70789339306ba9044bde56f50bb270a8
+population:
+  primary: is_us_resident == 1 and is_singleton == 1 and target known
+  early_entry_min_month: 1
+  early_entry_max_month: 3
+  all_record: all target-specific primary-population records
+targets:
+- target_preterm
+- target_nicu
+- target_lbw
+feature_set:
+  name: landmark_strict
+  paper_name: conservative landmark feature set
+  features:
+  - mother_race
+  - mother_height_inches
+  - mother_bmi
+  - mother_weight_pre
+  - prior_live_births
+  - prior_dead_births
+  - prior_terminations
+  - diab_pre
+  - hyper_pre
+  n_features: 9
+evaluation:
+  fractions:
+  - 0.05
+  - 0.1
+  candidate_sets:
+  - early_entry
+  - all_record_upper_bound
+  budget_levels:
+  - early_derived_absolute_budget
+  - all_record_derived_absolute_budget
+  metric: population_event_capture
+  metric_formula: true_positive_n / full_population_event_n
+  tie_breaker_top_b: score_descending_then_original_row_position_ascending
+bootstrap:
+  enabled: true
+  replicates: 500
+  seed: 2027
+  target_seed_stride: 100000
+  confidence_level: 0.95
+  full_size: true
+  paired: true
+  recompute_early_budget_each_replicate: false
+  fix_observed_absolute_budget_levels: true
+  budget_lock: B_early_and_B_all_fixed_to_observed_point_counts
+  progress_every: 25
+output:
+  directory: results/tae_2026_shapley_fixed_b_bootstrap
+  overwrite: false
+  save_bootstrap_replicates: true
+execution:
+  clearml_default_queue: 6be0e69f7fab49d48bc305ef1fb03a6a
+  clearml_dataset_id: 062ba26c0ca24cef99549c2a2ab34e65
+  canonical_task_id: 4f9d98dd39f3438181f48b256b23bd94
+  dataset_download_workers: 4

@@ -1,0 +1,180 @@
+{
+  "bootstrap": {
+    "all_budget_recomputed_from_resampled_n": false,
+    "base_seed": 2027,
+    "budget_definition": "B_early=round(q*N_early_observed); B_all=round(q*N_all_observed); both fixed in every replicate",
+    "budget_levels_fixed_to_observed_point_counts": true,
+    "canonical_replicate_crosscheck": "C01/C11 exact match to canonical fixed_absolute_budget early_entry->all_record_upper_bound bootstrap",
+    "confidence_level": 0.95,
+    "early_budget_recomputed_from_resampled_early_n": false,
+    "method": "paired full-size record-level nonparametric bootstrap",
+    "replicates": 500,
+    "target_seed_stride": 100000
+  },
+  "canonical_source": {
+    "artifact_names": {
+      "bootstrap_replicates": "bootstrap_replicates.csv",
+      "config": "experiment_config.locked.yaml",
+      "manifest": "run_manifest.json",
+      "models": "tae_canonical_models",
+      "protocol_results": "canonical_protocol_results.csv"
+    },
+    "canonical_manifest_status": "PASS",
+    "dataset_id": "062ba26c0ca24cef99549c2a2ab34e65",
+    "queue": "6be0e69f7fab49d48bc305ef1fb03a6a",
+    "task_id": "4f9d98dd39f3438181f48b256b23bd94"
+  },
+  "clearml_task_id": "73d3213787044a8c813c1013ce6e961b",
+  "design": {
+    "bootstrap_factor_levels": "candidate set is resampled through records; B_early and B_all remain fixed at observed absolute counts",
+    "candidate_sets": [
+      "early_entry",
+      "all_record_upper_bound"
+    ],
+    "cdc2023_role": "temporal evaluation cohort",
+    "feature_set": "landmark_strict",
+    "four_cells": {
+      "C00": "early candidate set + early-derived absolute budget",
+      "C01": "early candidate set + all-record-derived absolute budget",
+      "C10": "all-record candidate set + early-derived absolute budget",
+      "C11": "all-record candidate set + all-record-derived absolute budget"
+    },
+    "fractions": [
+      0.05,
+      0.1
+    ],
+    "model_refit_count": 0,
+    "paper_feature_set_name": "conservative landmark feature set",
+    "population_metric": "TP / all target-population events",
+    "same_frozen_score_vector_per_target": true,
+    "targets": [
+      "target_preterm",
+      "target_nicu",
+      "target_lbw"
+    ],
+    "threshold_reestimation_count": 0,
+    "tie_breaker": "score descending, original target-population row position ascending"
+  },
+  "elapsed_seconds": 145.9791967868805,
+  "git": {
+    "branch": null,
+    "commit_hash": null,
+    "dirty": null,
+    "note": "A clean commit/tag is still required for the paper protocol freeze and before any locked CDC 2024 replication.",
+    "required_for_remote_execution": false
+  },
+  "input_sha256": {
+    "canonical_bootstrap_replicates": "d2c671990fbed9fb57bcf77295e413f9dcabde55e16111b6ef447caa9cbf737e",
+    "canonical_locked_config": "18fc3bb66bcac248a6bf06de855e833c624dd520fe8c67e227399a248d3e69db",
+    "canonical_manifest": "6fa098c0f29c9c776c437010b600c2b45fda2bd850d16de1bfaa0362d2d31c36",
+    "canonical_protocol_results": "9e6cfe0a7591f367e0e8fc96747254efa3dad544f164dba6c75460711c394d98",
+    "cdc2023": "82b38b24d2f795a4a5233ce3a2fcb43b70789339306ba9044bde56f50bb270a8",
+    "script": "d5e5a246de67fda4406dcd981990f8466e20a610e15f508569b1200da07d2d70"
+  },
+  "invariants": {
+    "bootstrap_budget_levels_equal_observed_point_counts": true,
+    "bootstrap_budget_lock_label": true,
+    "bootstrap_factorial_identities": true,
+    "bootstrap_replicate_row_count": true,
+    "bootstrap_shapley_identities": true,
+    "bootstrap_summary_row_count": true,
+    "canonical_fixed_budget_C01_C11_bootstrap_reproduced": true,
+    "canonical_point_crosscheck_row_count": true,
+    "canonical_point_crosschecks_all_pass": true,
+    "decomposition_row_count": true,
+    "four_cell_row_count": true,
+    "full_population_event_denominator_shared_within_replicate": true,
+    "main_result_row_count": true,
+    "no_model_refit": true,
+    "no_threshold_reestimation": true,
+    "point_factorial_identities": true,
+    "point_shapley_identities": true,
+    "same_bootstrap_multiplicities_across_four_cells": true,
+    "same_frozen_model_score_vector_per_target": true
+  },
+  "model_lineage": [
+    {
+      "feature_set": "landmark_strict",
+      "features": [
+        "mother_race",
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "prior_terminations",
+        "diab_pre",
+        "hyper_pre"
+      ],
+      "model_path": "/clearml_agent_cache/storage/https/files.clearai.innopolis.university/pershin-medailab/Vache_Oganisyan/CDC%20Natality%20Audit/TAE%202026%20canonical%253A%20selective%20availability%20evaluation.4f9d98dd39f3438181f48b256b23bd94/artifacts/tae_canonical_models/13f69f4b8ed7699852496665e8a4da38.models_artifacts_archive_cache/target_preterm__landmark_strict__lightgbm.joblib",
+      "model_sha256": "f3beafc35acad569f2362110289b1b3387b84c0256f0452f4fc6387443fccfb7",
+      "source_canonical_task_id": "4f9d98dd39f3438181f48b256b23bd94",
+      "target": "target_preterm"
+    },
+    {
+      "feature_set": "landmark_strict",
+      "features": [
+        "mother_race",
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "prior_terminations",
+        "diab_pre",
+        "hyper_pre"
+      ],
+      "model_path": "/clearml_agent_cache/storage/https/files.clearai.innopolis.university/pershin-medailab/Vache_Oganisyan/CDC%20Natality%20Audit/TAE%202026%20canonical%253A%20selective%20availability%20evaluation.4f9d98dd39f3438181f48b256b23bd94/artifacts/tae_canonical_models/13f69f4b8ed7699852496665e8a4da38.models_artifacts_archive_cache/target_nicu__landmark_strict__lightgbm.joblib",
+      "model_sha256": "4e06e0eb4e50a347257a5b64b0819b34b0e64be65cd219d00e8597e4bd207292",
+      "source_canonical_task_id": "4f9d98dd39f3438181f48b256b23bd94",
+      "target": "target_nicu"
+    },
+    {
+      "feature_set": "landmark_strict",
+      "features": [
+        "mother_race",
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "prior_terminations",
+        "diab_pre",
+        "hyper_pre"
+      ],
+      "model_path": "/clearml_agent_cache/storage/https/files.clearai.innopolis.university/pershin-medailab/Vache_Oganisyan/CDC%20Natality%20Audit/TAE%202026%20canonical%253A%20selective%20availability%20evaluation.4f9d98dd39f3438181f48b256b23bd94/artifacts/tae_canonical_models/13f69f4b8ed7699852496665e8a4da38.models_artifacts_archive_cache/target_lbw__landmark_strict__lightgbm.joblib",
+      "model_sha256": "223eaa5c6a4e6bfb9452542743a880c3414dc98a5b41507f465f448e3d144c73",
+      "source_canonical_task_id": "4f9d98dd39f3438181f48b256b23bd94",
+      "target": "target_lbw"
+    }
+  ],
+  "output_sha256": {
+    "canonical_crosscheck.csv": "8060747709ae738327d9e76f33fc88dd73b091e0d051826ef2dbe2fa54999fc8",
+    "commands.txt": "072b566265db8b3273261e54d491eed4ee868a2074638c136872f831af871152",
+    "four_cell_results.csv": "46c10178682b39f45d43c0979b566645ec0c2b9fe8f1cbe9fa409936ad27b3dc",
+    "git_info.json": "ca67c597f8cd49ca4952a3ac4ded967b70ff767ebc033eadb756df8ecd6691a9",
+    "package_versions.txt": "2736ce6ee00eb3f5e32797b88312fb7be66d018731baa5df8f4eb1c185704187",
+    "reproducibility/README.txt": "407a86393a0cd22d46ff4445e60a714382477b9e1c7d7501e4dd890497b366ff",
+    "reproducibility/canonical_source/canonical_protocol_results.csv": "9e6cfe0a7591f367e0e8fc96747254efa3dad544f164dba6c75460711c394d98",
+    "reproducibility/canonical_source/experiment_config.locked.yaml": "18fc3bb66bcac248a6bf06de855e833c624dd520fe8c67e227399a248d3e69db",
+    "reproducibility/code/run_tae_shapley_fixed_b_bootstrap_clearml.py": "d5e5a246de67fda4406dcd981990f8466e20a610e15f508569b1200da07d2d70",
+    "reproducibility/model_lineage.json": "2c593819c3f009f949742c57ef156d06ed75860b74a104360ff50dcc1ee72761",
+    "reproducibility/shapley_config.locked.yaml": "72ef142751bc591ad4ad6fe499e20972a573748c18b6428399972b4589c151be",
+    "shapley_bootstrap_replicates.csv": "37a16770946968e8a08747763268c50afc7817b4580242cb0e9813ae0e215003",
+    "shapley_bootstrap_summary.csv": "d2fec55f3582de1adfe0047e2186ae08649f5aef1c7bae8a28345e59c94fe4e1",
+    "shapley_config.locked.yaml": "72ef142751bc591ad4ad6fe499e20972a573748c18b6428399972b4589c151be",
+    "shapley_decomposition.csv": "785c682954c5a3a73be1b7d399227a27be5e10a24731da7634bb5115ae0d6915",
+    "shapley_main_results.csv": "a4da549002fe81dbbc5b27ea43f35bb0cbdaabe3b33e73717ec554426c8468bb",
+    "shapley_summary.md": "39bf2e1fb3c536919f815be15996a31b3a54402b8b0d6d95d4cc72575ff671e3"
+  },
+  "outputs": {
+    "bootstrap_replicate_rows": 3000,
+    "bootstrap_summary_rows": 84,
+    "canonical_crosscheck_rows": 24,
+    "decomposition_rows": 6,
+    "four_cell_rows": 24,
+    "main_result_rows": 6
+  },
+  "script_version": "2026-08-24-v4-fixed-absolute-budget-bootstrap",
+  "status": "PASS"
+}

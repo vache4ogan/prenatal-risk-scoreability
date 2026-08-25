@@ -1,0 +1,30 @@
+{
+  "n_conditions": 81,
+  "n_sign_reversals": 18,
+  "n_fixed_budget_intervals_below_zero": 9,
+  "max_abs_mean_interaction_pp": 9.490684060609013,
+  "max_interaction_condition": {
+    "availability_target_fraction": 0.5,
+    "availability_relation": "higher_risk_less_available",
+    "model_quality": "good",
+    "nominal_fraction": 0.2
+  },
+  "max_interaction_components_pp": {
+    "availability": 18.295566087075528,
+    "capacity": 12.56720825636542,
+    "interaction": 9.490684060609013,
+    "naive": 30.86277434344095,
+    "fixed_budget": 23.04090811738003
+  },
+  "max_abs_replicate_interaction_pp": 10.71850393700787,
+  "max_abs_replicate_interaction_condition": {
+    "availability_target_fraction": 0.5,
+    "availability_relation": "higher_risk_less_available",
+    "model_quality": "good",
+    "nominal_fraction": 0.2,
+    "replicate": 6
+  },
+  "max_factorial_identity_error": 2.775557561562892e-17,
+  "max_shapley_identity_error": 5.551115123125783e-17,
+  "max_naive_total_identity_error": 0.0
+}
