@@ -1,0 +1,116 @@
+# TAE 2026 canonical selective-availability evaluation.
+# Scientific definitions are frozen in 01_COHORT_DEFINITIONS.md,
+# 02_FEATURE_AUDIT.md, and 03_EVALUATION_PROTOCOLS.md.
+
+data:
+  cdc2022: data/cdc_temporal_harmonized/cdc_natality_2022_harmonized.csv
+  cdc2023: data/cdc_temporal_harmonized/cdc_natality_2023_harmonized.csv
+  expected_rows:
+    '2022': 3676029
+    '2023': 3605081
+  verify_input_hashes: true
+  expected_sha256:
+    '2022': c5f1ab62b0e9ac63795e75f6075d2523a3f4c5dc3e95c7aa1f7df6763205a59c
+    '2023': 82b38b24d2f795a4a5233ce3a2fcb43b70789339306ba9044bde56f50bb270a8
+
+output:
+  directory: results/tae_2026_canonical
+  overwrite: false
+  save_models: true
+  upload_models_to_clearml: true
+  save_predictions: false
+  upload_predictions_to_clearml: false
+  save_bootstrap_replicates: true
+
+split:
+  seed: 2026
+  calibration_fraction: 0.20
+
+cohorts:
+  primary_population: is_us_resident == 1 and is_singleton == 1
+  early_entry_min_month: 1
+  early_entry_max_month: 3
+  any_care_min_month: 1
+  any_care_max_month: 10
+  no_care_value: 0
+  unknown_care: missing
+
+targets:
+  - target_preterm
+  - target_nicu
+  - target_lbw
+
+feature_set:
+  name: landmark_strict
+  n_features: 8
+  features:
+    - mother_race
+    - mother_height_inches
+    - mother_bmi
+    - mother_weight_pre
+    - prior_live_births
+    - prior_dead_births
+    - diab_pre
+    - hyper_pre
+
+model:
+  name: lightgbm
+  parameters:
+    objective: binary
+    n_estimators: 350
+    learning_rate: 0.05
+    num_leaves: 31
+    max_depth: -1
+    min_child_samples: 100
+    subsample: 1.0
+    colsample_bytree: 1.0
+    reg_alpha: 0.0
+    reg_lambda: 1.0
+    class_weight: null
+    scale_pos_weight: 1.0
+    random_state: 2026
+    n_jobs: -1
+    verbosity: -1
+    # Intentionally CPU-only for parity with the validated LightGBM pipeline.
+    # The ClearML task itself is routed to the GPU-agent queue below.
+    device_type: cpu
+
+preprocessing:
+  categorical_features:
+    - mother_race
+  numeric_imputation: median
+  categorical_imputation: most_frequent
+  standardize_numeric: true
+
+evaluation:
+  fractions:
+    - 0.05
+    - 0.10
+  scenarios:
+    - early_entry
+    - any_prenatal_care
+    - all_record_upper_bound
+  protocols:
+    - cohort_specific_top_fraction
+    - fixed_absolute_budget
+    - fixed_calibration_threshold
+  threshold_source: cdc2022_calibration_all_record
+  threshold_comparator: '>='
+  tie_breaker_top_b: original_row_position_ascending
+
+bootstrap:
+  enabled: true
+  replicates: 500
+  seed: 2027
+  confidence_level: 0.95
+  full_size: true
+  paired: true
+  progress_every: 25
+
+execution:
+  expected_primary_model_count: 3
+  expected_temporal_prediction_pass_count: 3
+  # User-specified ClearML GPU-agent queue / routing ID.
+  clearml_default_queue: 6be0e69f7fab49d48bc305ef1fb03a6a
+  # GPU agent routing != GPU LightGBM execution.
+  lightgbm_device_type: cpu

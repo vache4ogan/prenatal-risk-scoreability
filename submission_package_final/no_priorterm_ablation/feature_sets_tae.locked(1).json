@@ -1,0 +1,80 @@
+{
+  "booking_strict_legacy12": {
+    "description": "Legacy 12-feature set retained for reproducibility only.",
+    "features": [
+      "diab_pre",
+      "hyper_pre",
+      "marital_status",
+      "mother_age",
+      "mother_bmi",
+      "mother_educ",
+      "mother_height_inches",
+      "mother_race",
+      "mother_weight_pre",
+      "prior_dead_births",
+      "prior_live_births",
+      "prior_terminations"
+    ],
+    "n_features": 12
+  },
+  "excluded_from_landmark_strict": {
+    "features": [
+      "mother_age",
+      "marital_status",
+      "mother_educ"
+    ],
+    "reason": "Official public-use definitions are not maximally anchored to the early prediction landmark."
+  },
+  "landmark_strict": {
+    "description": "Maximally conservative early-landmark feature set after official CDC/NCHS timing audit.",
+    "features": [
+      "mother_race",
+      "mother_height_inches",
+      "mother_bmi",
+      "mother_weight_pre",
+      "prior_live_births",
+      "prior_dead_births",
+      "diab_pre",
+      "hyper_pre"
+    ],
+    "n_features": 8
+  },
+  "target_specific_sets": {
+    "target_lbw": {
+      "landmark_strict": [
+        "mother_race",
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "diab_pre",
+        "hyper_pre"
+      ]
+    },
+    "target_nicu": {
+      "landmark_strict": [
+        "mother_race",
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "diab_pre",
+        "hyper_pre"
+      ]
+    },
+    "target_preterm": {
+      "landmark_strict": [
+        "mother_race",
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "diab_pre",
+        "hyper_pre"
+      ]
+    }
+  }
+}

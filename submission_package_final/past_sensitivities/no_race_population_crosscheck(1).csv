@@ -1,0 +1,10 @@
+target,scenario,status,full_population_n,full_population_event_n,eligible_n,eligible_event_n
+target_preterm,early_entry,PASS,3480382,303001,2601060,217632
+target_preterm,any_prenatal_care,PASS,3480382,303001,3340358,275914
+target_preterm,all_record_upper_bound,PASS,3480382,303001,3480382,303001
+target_nicu,early_entry,PASS,3476584,303285,2597274,214174
+target_nicu,any_prenatal_care,PASS,3476584,303285,3335329,279316
+target_nicu,all_record_upper_bound,PASS,3476584,303285,3476584,303285
+target_lbw,early_entry,PASS,3480316,243776,2600093,169152
+target_lbw,any_prenatal_care,PASS,3480316,243776,3338986,223218
+target_lbw,all_record_upper_bound,PASS,3480316,243776,3480316,243776

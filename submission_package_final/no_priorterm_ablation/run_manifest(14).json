@@ -1,0 +1,96 @@
+{
+  "bootstrap": {
+    "base_seed": 2027,
+    "confidence_level": 0.95,
+    "method": "paired full-size record-level nonparametric bootstrap",
+    "replicates": 500
+  },
+  "clearml_dataset_id": "062ba26c0ca24cef99549c2a2ab34e65",
+  "clearml_queue": "6be0e69f7fab49d48bc305ef1fb03a6a",
+  "clearml_task_id": "a4ad0dba8acb4c5da95d5b18c1d426ef",
+  "design": {
+    "cdc2023_role": "temporal test only",
+    "clearml_agent_queue": "6be0e69f7fab49d48bc305ef1fb03a6a",
+    "feature_set": "landmark_strict",
+    "features": [
+      "mother_race",
+      "mother_height_inches",
+      "mother_bmi",
+      "mother_weight_pre",
+      "prior_live_births",
+      "prior_dead_births",
+      "diab_pre",
+      "hyper_pre"
+    ],
+    "fractions": [
+      0.05,
+      0.1
+    ],
+    "lightgbm_device_type": "cpu",
+    "model": "lightgbm",
+    "model_fit_count": 3,
+    "n_features": 8,
+    "primary_population": "U.S.-resident singleton births with target known",
+    "protocols": [
+      "cohort_specific_top_fraction",
+      "fixed_absolute_budget",
+      "fixed_calibration_threshold"
+    ],
+    "scenarios": [
+      "early_entry",
+      "any_prenatal_care",
+      "all_record_upper_bound"
+    ],
+    "temporal_prediction_pass_count": 3,
+    "threshold_source": "CDC 2022 target-specific all-record calibration pool"
+  },
+  "elapsed_seconds": 1265.3959262371063,
+  "input_sha256": {
+    "2022": "c5f1ab62b0e9ac63795e75f6075d2523a3f4c5dc3e95c7aa1f7df6763205a59c",
+    "2023": "82b38b24d2f795a4a5233ce3a2fcb43b70789339306ba9044bde56f50bb270a8"
+  },
+  "invariants": {
+    "cdc2023_not_used_for_fit_or_threshold": true,
+    "decomposition_identity_exact": true,
+    "early_subset_any_subset_all": true,
+    "one_cdc2023_prediction_vector_per_target": true,
+    "one_model_per_target": true,
+    "protocol_A_exact_cohort_fraction_budget": true,
+    "protocol_B_exact_equal_absolute_budget": true,
+    "protocol_C_common_2022_threshold": true,
+    "same_full_population_denominator_across_scenarios": true
+  },
+  "output_sha256": {
+    "bootstrap_replicates.csv": "5d0565440dc3fafdb4e6082012b24c8f3342ae790355272fca72fb44d87a278b",
+    "bootstrap_summary.csv": "0c77739564a7eb8f598a86d6207f947563afbfce8351844022387c7335f56840",
+    "canonical_protocol_comparisons.csv": "e1f70ca26e4884e3d07f58cf728905679ae8c0f07346f8bb46f3f0f638f1a06a",
+    "canonical_protocol_results.csv": "40b05f75206c85e8ba49eccb06b9e0a5d7828d1515729c7eae6c5a117bcc34f2",
+    "cohort_counts_validation.csv": "785059f725f3e2ebf74fe0b2fe548ce5d046d61f8b9cba5d29dae627d43ca5aa",
+    "commands.txt": "3aa32b7a0e56c3243cf547d4b81b6089e7d899c40654b905d67b922150c0a127",
+    "effect_decomposition.csv": "a12ec607f2bd8b3a8f3c89cd52b24f93cfe2e73e6cafea04b97057b608d78bbe",
+    "experiment_config.locked.yaml": "365701905261ed9e585c3a71fa5529e46ad37d49dcf5eef17dd74f51bcf86bcc",
+    "feature_sets_tae.locked.json": "de2c775613c8c00d055ce57348f742e79213eebfd778d037ab09e4852b4859fb",
+    "git_info.json": "323bdf0f9cc76150b5392141c5191a190e02b70294e2e730823c5e14e9359513",
+    "model_diagnostics.csv": "7f688a3a2ddab3f0dfdebf23f75a5c9ebd5e418f4c7e257bf1137c70d527a021",
+    "package_versions.txt": "2736ce6ee00eb3f5e32797b88312fb7be66d018731baa5df8f4eb1c185704187",
+    "reproducibility/code/run_canonical_noprior.py": "3f6d2bd4e832c125058ff1f88f92284409dcc80a5028815eecb90400d59bb2c5",
+    "reproducibility/configs/experiment_config_tae_canonical.locked.yaml": "365701905261ed9e585c3a71fa5529e46ad37d49dcf5eef17dd74f51bcf86bcc",
+    "reproducibility/metadata/feature_sets_tae.locked.json": "de2c775613c8c00d055ce57348f742e79213eebfd778d037ab09e4852b4859fb",
+    "tae_canonical_summary.md": "4a19885fe1b5b67126a7a7b679fa0754043fd50bb7aaaa6364f7bcaaac2cce88",
+    "thresholds_2022.csv": "5bad8025212896e39fb65d5a134e239d6bd0d97b994c7c87d33fb1ad6e245e07"
+  },
+  "outputs": {
+    "bootstrap_replicate_rows": 27000,
+    "bootstrap_summary_rows": 54,
+    "comparison_rows": 54,
+    "decomposition_rows": 6,
+    "protocol_rows": 54,
+    "saved_models": [
+      "models/target_preterm__landmark_strict__lightgbm.joblib",
+      "models/target_nicu__landmark_strict__lightgbm.joblib",
+      "models/target_lbw__landmark_strict__lightgbm.joblib"
+    ],
+    "saved_predictions": []
+  },
+  "status": "PASS"
+}
