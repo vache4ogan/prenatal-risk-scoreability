@@ -11,3 +11,12 @@ paper/**/*.yaml text eol=lf
 paper/**/*.yml text eol=lf
 paper/**/*.pdf -text
 paper/**/*.png -text
+
+# These archived submission artifacts were hashed with CRLF endings.
+paper/analysis_code/synthetic_outputs/synthetic_shapley_replicates.csv text eol=crlf
+paper/source_data/figure_manifest.json text eol=crlf
+paper/source_data/figure1_headline_data.csv text eol=crlf
+paper/source_data/sensitivity_no_priorterm.csv text eol=crlf
+paper/source_data/sensitivity_no_race.csv text eol=crlf
+paper/source_data/shapley_bootstrap_replicates.csv text eol=crlf
+paper/tables/*.tex text eol=crlf
