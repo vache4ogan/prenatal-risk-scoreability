@@ -1,0 +1,16 @@
+\begin{table}[!htbp]
+\centering
+\caption{Frozen-score temporal check. Brier baseline is the constant CDC 2023 prevalence prediction; skill is $1-\mathrm{Brier}_{model}/\mathrm{Brier}_{baseline}$.}
+\label{tab:score_transport}
+\small
+\setlength{\tabcolsep}{4.0pt}
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrrrr@{}}
+\toprule
+Outcome & ROC-AUC: 2022 $\rightarrow$ 2023 & AP: 2022 $\rightarrow$ 2023 & Brier: model / baseline & Brier skill \\
+\midrule
+Preterm birth & 0.614$\rightarrow$0.612 & 0.146$\rightarrow$0.146 & 0.0780 / 0.0795 & 1.9\% \\
+NICU admission & 0.611$\rightarrow$0.608 & 0.139$\rightarrow$0.141 & 0.0783 / 0.0796 & 1.7\% \\
+Low birth weight & 0.653$\rightarrow$0.652 & 0.133$\rightarrow$0.132 & 0.0636 / 0.0651 & 2.4\% \\
+\bottomrule
+\end{tabular*}
+\end{table}

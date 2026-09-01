@@ -1,4 +1,0 @@
-target,feature_set,model,source_year,source_population,nominal_fraction,calibration_n,nominal_selected_n,realized_selected_n_with_ties,threshold,comparator
-target_preterm,landmark_no_race_8,lightgbm,2022,calibration target-specific all-record,0.1,709742,70974,70987,0.12085692229292144,>=
-target_nicu,landmark_no_race_8,lightgbm,2022,calibration target-specific all-record,0.1,708927,70893,71560,0.1155422932397895,>=
-target_lbw,landmark_no_race_8,lightgbm,2022,calibration target-specific all-record,0.1,709748,70975,70994,0.10826269775294299,>=

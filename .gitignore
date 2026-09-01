@@ -16,3 +16,13 @@ artifacts/
 .DS_Store
 repo_migration/
 paper_old/
+paper/build/
+paper/.matplotlib/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz

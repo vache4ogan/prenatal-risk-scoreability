@@ -1,0 +1,22 @@
+{
+  "inputs": {
+    "source_data\\cohort_counts_validation.csv": "562af96c77a20ee31c61e235945dbf9877ed2b6b592994ef96ce19c94b90f589",
+    "source_data\\shapley_bootstrap_replicates.csv": "37a16770946968e8a08747763268c50afc7817b4580242cb0e9813ae0e215003",
+    "source_data\\shapley_main_results.csv": "3d74cbbf0be7889041031af765b78a3c2bde935a93463c97ffa2058d92062e18",
+    "source_data\\synthetic_figure3_data.csv": "3f57abfda4642b6da98a71897fc9328a10ea0c7e70d2f67e44e626d8fd62e8a2"
+  },
+  "invariants": {
+    "bootstrap_rows": 3000,
+    "max_shapley_identity_error": 1.0755285551056204e-16,
+    "mean_sign_reversals": 18,
+    "robust_negative_fixed_budget_conditions": 9,
+    "shapley_rows": 6,
+    "synthetic_conditions": 81
+  },
+  "outputs": {
+    "figures\\figure1_headline.pdf": "a15b94e8ae6ba7859368b388f6adc775a45b37c4351d0d3a4fb6fd5cd9e1056d",
+    "figures\\figure1_headline.png": "0a8a19130e4cfc99cb4ede2e12bb0821497aad2eeabd3087a2dfa9b6c5855812",
+    "figures\\figure3_synthetic_stress_test.pdf": "673395e0bf25c2fa3c13532af2c7e2e061ca6e23bd7b77bde72c72da78ecb70c",
+    "figures\\figure3_synthetic_stress_test.png": "7427bc56e63b8c9f8979b52dd248e09fdc923c3cc99d184a151e53f73cf55d60"
+  }
+}

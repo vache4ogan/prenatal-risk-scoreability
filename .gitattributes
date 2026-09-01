@@ -1,0 +1,13 @@
+# The submission manifest hashes text files with LF line endings.
+paper/**/*.bib text eol=lf
+paper/**/*.csv text eol=lf
+paper/**/*.json text eol=lf
+paper/**/*.md text eol=lf
+paper/**/*.py text eol=lf
+paper/**/*.sty text eol=lf
+paper/**/*.tex text eol=lf
+paper/**/*.txt text eol=lf
+paper/**/*.yaml text eol=lf
+paper/**/*.yml text eol=lf
+paper/**/*.pdf -text
+paper/**/*.png -text

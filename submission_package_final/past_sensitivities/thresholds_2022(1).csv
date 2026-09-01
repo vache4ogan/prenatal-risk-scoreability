@@ -1,7 +1,0 @@
-target,feature_set,model,source_year,source_population,nominal_fraction,calibration_n,nominal_selected_n,realized_selected_n_with_ties,threshold,comparator
-target_preterm,landmark_strict,lightgbm,2022,calibration target-specific all-record,0.05,709742,35487,35487,0.15127517346199312,>=
-target_preterm,landmark_strict,lightgbm,2022,calibration target-specific all-record,0.1,709742,70974,70975,0.12120037918562798,>=
-target_nicu,landmark_strict,lightgbm,2022,calibration target-specific all-record,0.05,708927,35446,35449,0.14095123245845226,>=
-target_nicu,landmark_strict,lightgbm,2022,calibration target-specific all-record,0.1,708927,70893,71004,0.11772920412554846,>=
-target_lbw,landmark_strict,lightgbm,2022,calibration target-specific all-record,0.05,709748,35487,35502,0.14272557817979378,>=
-target_lbw,landmark_strict,lightgbm,2022,calibration target-specific all-record,0.1,709748,70975,71040,0.11859693419584151,>=

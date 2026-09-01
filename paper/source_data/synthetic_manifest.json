@@ -1,0 +1,134 @@
+{
+  "command": "python analysis_code/synthetic/run_tae_synthetic_shapley81.py --config analysis_code/configs/synthetic_experiment_shapley81.yaml --overwrite",
+  "config_path": "analysis_code/configs/synthetic_experiment_shapley81.yaml",
+  "config_sha256": "4468071567c2007938252f0f8f4a99c261101c8d780f5b4a239b6740900186cd",
+  "created_at_utc": "2026-08-25T12:30:06.408418+00:00",
+  "design": {
+    "availability_associations": [
+      {
+        "name": "higher_risk_less_available",
+        "slope": -1.0
+      },
+      {
+        "name": "risk_independent",
+        "slope": 0.0
+      },
+      {
+        "name": "higher_risk_more_available",
+        "slope": 1.0
+      }
+    ],
+    "availability_fractions": [
+      0.5,
+      0.7,
+      0.9
+    ],
+    "calibration_n": 50000,
+    "evaluation_fractions": [
+      0.05,
+      0.1,
+      0.2
+    ],
+    "model_qualities": [
+      {
+        "name": "good",
+        "noise_sd": 0.5
+      },
+      {
+        "name": "medium",
+        "noise_sd": 1.0
+      },
+      {
+        "name": "weak",
+        "noise_sd": 2.0
+      }
+    ],
+    "outcome_prevalence_target": 0.1,
+    "outcome_risk_slope": 1.0,
+    "population_n": 100000,
+    "protocols": [
+      "cohort_specific_top_fraction",
+      "fixed_absolute_budget",
+      "fixed_calibration_threshold"
+    ],
+    "replicates": 100,
+    "scenarios": [
+      "available_subset",
+      "all_population"
+    ],
+    "seed": 2028,
+    "threshold_source": "independent_calibration_all_population",
+    "tie_breaker_top_b": "original_row_position_ascending"
+  },
+  "elapsed_seconds": 19.782275915145874,
+  "git": {
+    "branch": null,
+    "commit_hash": null,
+    "dirty": true,
+    "note": "Repository identity removed for double-blind review; file hashes preserve the executed analysis."
+  },
+  "invariants": {
+    "decomposition_identity_within_tolerance": true,
+    "distortion_equals_capacity_component": true,
+    "exactly_81_condition_grid": true,
+    "figure3_data_contains_all_81_conditions": true,
+    "four_cell_factorial_identity_exact": true,
+    "protocol_A_exact_cohort_fraction_budget": true,
+    "protocol_B_exact_equal_absolute_budget": true,
+    "protocol_C_common_independent_calibration_threshold": true,
+    "same_population_event_denominator_across_scenarios": true,
+    "same_score_vector_across_availability_scenarios": true,
+    "symmetric_shapley_identity_exact": true,
+    "tp_decomposition_identity_exact": true
+  },
+  "output_sha256": {
+    "synthetic_ci_below_zero.csv": "0b072f2a2457dcd300611d264a1446f0d12c8ad549ca148497e2169693f68e24",
+    "synthetic_comparison_summary.csv": "b6e795ff16e342153f7469255c9106de3118807b25acf4875ab091e40a8a184a",
+    "synthetic_condition_replicates.csv": "cba34b40fea0a6c952bf784ad714d4f9642b5059ca54cecf079f30bc3d06debb",
+    "synthetic_decomposition.csv": "2a89bbd41b15cd7cd6fbe8db15859ba475dca53d22b8efc82940b815f1ed2982",
+    "synthetic_decomposition_summary.csv": "80f705cbc1bdf80fc5944601e895da1ea12cfce446ab7e8e0895659a5a8d7c5a",
+    "synthetic_experiment.locked.yaml": "4468071567c2007938252f0f8f4a99c261101c8d780f5b4a239b6740900186cd",
+    "synthetic_figure3_data.csv": "7c902776947ea2006abb0ab70482c15c0aee090ead58039f96dd62f52b2a753c",
+    "synthetic_protocol_comparisons.csv": "3e67395afda8473d4f829e6bf810c241cc9af88b1a0db8751efb3377ab6839f3",
+    "synthetic_protocol_results.csv": "983c8667fd34daf75a5bc724ca25aaa59c6ebeb04058bee247ad8209b11d5704",
+    "synthetic_shapley_replicates.csv": "2a89bbd41b15cd7cd6fbe8db15859ba475dca53d22b8efc82940b815f1ed2982",
+    "synthetic_shapley_summary.csv": "80f705cbc1bdf80fc5944601e895da1ea12cfce446ab7e8e0895659a5a8d7c5a",
+    "synthetic_sign_reversals.csv": "a160e6bf07fc8c5062366c25b19955b20b38a724087911da9ad243a4d569b825",
+    "synthetic_summary.md": "1e797e66f78df1198eac9743a6b368c7230e5221ca54c12e30aa1426e0ed3a8e"
+  },
+  "outputs": {
+    "ci_below_zero_rows": 12,
+    "comparison_rows": 24300,
+    "comparison_summary_rows": 243,
+    "condition_rows": 900,
+    "decomposition_rows": 8100,
+    "decomposition_summary_rows": 81,
+    "figure3_rows": 81,
+    "max_abs_interaction": 0.10718503937007873,
+    "protocol_rows": 48600,
+    "shapley_replicate_rows": 8100,
+    "sign_reversal_rows": 18
+  },
+  "packages": {
+    "PyYAML": "6.0.3",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "python": "3.14.6"
+  },
+  "script_sha256": "a26badcd67172f4d76ef0df47366fee1568a8cb935a3f6fbb42e6591042a9c6f",
+  "solved_intercepts": {
+    "availability": {
+      "fraction=0.5|slope=-1.0": 0.0,
+      "fraction=0.5|slope=0.0": 0.0,
+      "fraction=0.5|slope=1.0": 0.0,
+      "fraction=0.7|slope=-1.0": 1.0184006519909872,
+      "fraction=0.7|slope=0.0": 0.8472978603867887,
+      "fraction=0.7|slope=1.0": 1.0184006519909872,
+      "fraction=0.9|slope=-1.0": 2.5642215001107616,
+      "fraction=0.9|slope=0.0": 2.197224577337238,
+      "fraction=0.9|slope=1.0": 2.5642215001107616
+    },
+    "outcome": -2.5642215001107616
+  },
+  "status": "PASS"
+}

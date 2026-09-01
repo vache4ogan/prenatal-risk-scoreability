@@ -1,36 +1,67 @@
-# TAE 2026: Selective Availability (NeurIPS Submission)
+# Same Top Fraction, Different Workload
 
-This repository contains the official codebase and reproducibility artifacts for the paper evaluating **Selective Availability** and structural biases in clinical ML deployment, using the CDC Natality dataset (2022-2024).
+Code and reproducibility artifacts for the TAE 2026 submission **"Same Top
+Fraction, Different Workload: Auditing Eligibility and Capacity in Clinical
+Risk Evaluation."** The exact submitted repository snapshot is preserved by
+the Git tag `tae-2026-submitted`.
 
-## 📊 Repository Structure
+## Repository layout
 
-* **`configs/`** - Locked configurations and feature sets for ClearML.
-* **`scripts/preprocessing/`** - Data harmonization and parsing scripts.
-* **`scripts/experiments/`** - Core ML pipeline (LightGBM training, Shapley decomposition, 2024 Locked Temporal Replication, and Ablation studies).
-* **`paper/`** - LaTeX source files and generated figures.
+- `paper/`: final anonymous manuscript package, compiled PDF, aggregate source
+  data, figure and table generators, and the package verifier.
+- `configs/canonical/`: locked configurations for the final experiments.
+- `scripts/preprocessing/`: CDC Natality extraction, harmonization, timing
+  audit, and 2024 validation code.
+- `scripts/experiments/`: clinical evaluation, Shapley decomposition,
+  sensitivities, temporal replication, and the 81-condition synthetic study.
+- `metadata/`: cohort, feature-timing, schema, and target-definition metadata.
+- `results/`: retained final run artifacts and sensitivity outputs.
+- `tests/`: data-independent checks of selection, cohort, bootstrap,
+  calibration, and leakage invariants.
 
-## 🚀 How to Reproduce
+Raw individual-level Natality records, fitted models, predictions, credentials,
+and private service addresses are not stored in this repository.
 
-Our pipeline relies on ClearML for strict lineage and artifact tracking.
+## Verify the submitted package
 
-### 1. Install Requirements
-`bash
-pip install -r pyproject.toml
-`
+Use Python 3.10-3.12 for the repository code. The paper verifier also works in
+Python 3.9.
 
-### 2. Data Preparation
-Due to DUA restrictions, raw CDC data is not provided. Download the Public Use Files (2022-2024) from the [NCHS website](https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm) and place them in the `data/` directory. Run the harmonization scripts in `scripts/preprocessing/`.
+```bash
+python -m pip install -e ".[dev]"
+python paper/verify_submission.py
+python -m pytest -q
+```
 
-### 3. Run Core Experiments
-`bash
-python scripts/experiments/run_tae_canonical_clearml.py
-python scripts/experiments/run_tae_shapley_fixed_b_bootstrap_clearml.py
-`
+To regenerate manuscript artifacts:
 
-### 4. Run 2024 Locked Temporal Replication
-`bash
-python scripts/experiments/run_2024_locked_replication.py
-`
+```bash
+cd paper
+python -m pip install -r requirements_anonymous.txt
+python generate_figures.py
+python generate_tables.py
+tectonic main.tex --outdir build --keep-logs
+python verify_submission.py
+```
 
-## 📝 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Re-run the experiments
+
+The clinical experiments require the NCHS Natality public-use files and the
+locked ClearML dataset lineage. Configure access through an untracked `.env`
+based on `.env.example`; never commit credentials.
+
+```bash
+python scripts/experiments/run_tae_canonical_clearml.py \
+  --config configs/canonical/experiment_config_tae_canonical.yaml \
+  --preflight-only
+
+python scripts/experiments/run_tae_shapley_fixed_b_bootstrap_clearml.py \
+  --smoke-test
+
+python scripts/experiments/run_tae_synthetic_shapley81.py \
+  --config configs/canonical/synthetic_experiment_shapley81.yaml \
+  --overwrite
+```
+
+Exact package versions, locked configurations, manifests, aggregate outputs,
+and the final PDF are retained in `results/` and `paper/`.

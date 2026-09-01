@@ -1,312 +1,689 @@
-% ML4H 2026 review manuscript
-% Compile from this directory with:
-%   latexmk -C
-%   latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
-%
-% Keep the official jmlr.cls and jmlrutils.sty files unchanged.
-% Confirm the submission track and institutional IRB wording before submission.
+\documentclass{article}
 
-\documentclass[pmlr,twocolumn,10pt]{jmlr}
+\usepackage[dblblindworkshop]{neurips_2026}
+\workshoptitle{TAE (Trust-AI-Eval): Can We Trust AI Evaluation?}
 
-\mlhtrack{proceedings}
-
-\newif\iffinal
-\finalfalse
-% \finaltrue
-
-\iffinal
-  \ifmlhneedspmlr
-    \jmlrvolume{XXX}
-    \jmlryear{2026}
-  \fi
-  \ifmlhfindings \jmlrproceedings{}{ML4H 2026 - Findings Track}\fi
-  \ifmlhdemo     \jmlrproceedings{}{ML4H 2026 - Demo Track}\fi
-  \jmlrworkshop{Machine Learning for Health (ML4H) 2026}
-\else
-  \jmlrproceedings{}{Submitted to ML4H 2026: \mlhtrackname}
-  \jmlrworkshop{Machine Learning for Health (ML4H) 2026}
-\fi
-
-% Packages used by the official template.
-\urlstyle{same}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
 \usepackage{booktabs}
-\usepackage[switch]{lineno}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{multirow}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage[hypertexnames=false]{hyperref}
+\usetikzlibrary{arrows.meta,positioning}
 
-% Sparse line numbering preserves review usability without crowding the
-% two-column layout. Remove \linenumbers in the camera-ready version.
-\renewcommand\linenumberfont{\normalfont\tiny\sffamily}
-\setlength\linenumbersep{7pt}
-\modulolinenumbers[5]
+\hypersetup{
+  colorlinks=true,
+  citecolor=black,
+  linkcolor=black,
+  urlcolor=black,
+  pdfauthor={},
+  pdftitle={},
+  pdfsubject={},
+  pdfkeywords={},
+  pdfcreator={},
+  pdfproducer={}
+}
 
-\title[Who Can Be Scored?]{Who Can Be Scored? Cohort Availability Limits
-Population-Level Capture in Prenatal Risk Triage}
-\author{Anonymous Author(s)}
+\definecolor{auditnavy}{HTML}{17324D}
+\definecolor{auditblue}{HTML}{0072B2}
+\definecolor{auditorange}{HTML}{D55E00}
+
+\newcommand{\topset}{\operatorname{Top}}
+\newcommand{\capture}{\operatorname{Capture}}
+\newcommand{\receligible}{\operatorname{Recall}_{\mathrm{eligible}}}
+\newcommand{\ceiling}{\operatorname{Ceiling}}
+
+\title{Same Top Fraction, Different Workload:\\
+Auditing Eligibility and Capacity in Clinical Risk Evaluation}
+
+\author{Anonymous Authors}
 
 \begin{document}
 
 \maketitle
-\linenumbers
 
-\ifmlhdemo\else
 \begin{abstract}
-Clinical risk models are often evaluated only among individuals for whom a
-prediction can be generated, obscuring events outside the scoreable cohort.
-Using U.S. CDC Natality records, we fitted one LightGBM model per outcome on
-2022 singleton births and evaluated preterm delivery, neonatal intensive care
-unit admission, and low birth weight on a 2023 temporal test. Early
-eligibility, defined as prenatal-care initiation in months 1--3, covered
-approximately 74.7\% of records but only 69.4--71.8\% of outcome events. At
-an equal absolute referral budget of 10\% of each target-specific population,
-the early policy captured 2.58, 2.73, and 3.43 percentage points fewer events
-than the full-cohort policy, corresponding to 7,821, 8,271, and 8,356 events.
-Paired full-size bootstrap intervals from 500 replicates were above zero for
-all outcomes. Clinical prediction evaluation should therefore distinguish
-scoreability ceiling, conditional recall, and population event capture under
-an explicit resource budget.
+Clinical risk scores turn patient rankings into finite worklists for specialist
+review, monitoring, or prevention. Yet cross-cohort evaluations often compare
+the same top fraction across candidate sets of different sizes, changing both
+who can be ranked and how many people receive service. We introduce a
+decision-aware four-cell audit that keeps the full-population event denominator
+fixed and crosses two eligibility rules with two absolute budgets, separating
+broader reach from additional capacity. We apply it to frozen birth-record
+score vectors for preterm birth, neonatal intensive care admission, and low
+birth weight in approximately 3.48 million CDC Natality 2023 records. At the
+nominal top 10\% operating point, moving from early-entry eligibility to a
+retrospective all-record upper bound reports a 39--42\% relative increase in
+captured events while expanding the worklist by one third. Symmetric accounting
+allocates about three fifths of the joint gain to added capacity and two fifths
+to broader eligibility; at a fixed budget, the eligibility gain is less than
+half the cohort-relative estimate. In 22\% of controlled conditions, the
+cohort-relative comparison improves while fixed-budget capture declines. The
+audit therefore distinguishes population reach from resource expansion and
+makes the policy represented by a top-fraction metric explicit.
 \end{abstract}
 
-\begin{keywords}
-clinical risk prediction; cohort eligibility; scoreability; prenatal care;
-resource-constrained triage; temporal evaluation
-\end{keywords}
-\fi
-
-\ifmlhneedsstatements
-\paragraph*{Data and Code Availability}
-The study uses publicly available, de-identified CDC Natality public-use
-records. The review package will include anonymized preprocessing and analysis
-code, locked configurations, input hashes, and article-facing result tables.
-A de-anonymized repository will be released after review.
-
-\paragraph*{Institutional Review Board (IRB)}
-The analysis used publicly available, de-identified public-use records and
-involved no participant interaction or access to identifiable information.
-The applicable institutional determination will be provided if the paper is
-accepted.
-\fi
-
 \section{Introduction}
-\label{sec:intro}
+\label{sec:introduction}
 
-Clinical prediction can fail at two stages. A person may be unavailable for
-scoring because the required encounter or measurement has not occurred, or a
-model may rank an available case incorrectly. Standard discrimination and
-within-cohort recall primarily address the second stage and do not count
-events outside the scoreable cohort.
+Clinical risk models increasingly determine which records receive specialist
+review, monitoring, outreach, or preventive services
+\citep{annarumma2019triage,baltruschat2021worklist,jung2021framework,singh2023resource}.
+These workflows are capacity constrained: a model produces a ranking, but an
+organization acts on a finite number of cases. Top-$q$ precision, recall, or
+event capture therefore appears to connect predictive performance directly to
+an operational decision. Prenatal case-management studies, for example,
+evaluate the highest-risk 5--15\% because program capacity covers a fraction of
+eligible pregnancies \citep{pan2017prenatal}.
 
-This distinction is consequential in prenatal triage. A policy restricted to
-people initiating prenatal care early cannot act on later-entry, no-care, or
-unknown-timing records. Conventional top-$k$ comparisons can also confound
-eligibility with capacity when $k$ is defined separately in cohorts of
-different sizes. We therefore compare early-entry and full-cohort policies
-while holding the fitted model, prediction vector, and absolute referral
-budget fixed.
+The concrete scale of this policy difference is visible in CDC Natality 2023
+\citep{cdcNatality}. An early-entry candidate set of approximately 2.60 million
+records yields a top-10\% worklist of about 260,000, whereas an all-record set
+of approximately 3.48 million yields about 348,000 selections at the same
+nominal fraction. The comparison therefore changes both the candidate gate and
+the absolute workload. Clinical decision frameworks distinguish predictive
+ranking from action under finite resources
+\citep{jung2021framework,singh2023resource}: a fixed-capacity service and a
+service that expands with candidate volume implement different policies and
+require different contrasts.
 
-Prior work treats nonrandom observation, post-score abstention, and finite
-clinical capacity largely as separate problems. Informative-presence studies
-show that observed EHR cohorts can differ systematically from target
-populations \citep{haneuse2016selection,sisk2021informative}.
-Selective-prediction methods abstain after the required inputs reach the model
-\citep{leibig2017uncertainty}, whereas resource-constrained
-evaluation can impose an absolute capacity among already scored candidates
-\citep{singh2023resource}. Prenatal studies have used gestational landmarks or
-national vital-statistics cohorts
-\citep{osterman2026prenatal,abraham2022dense,schulz2022delivery},
-but generally report performance within records meeting each study's
-inclusion and data-availability criteria. In our targeted audit, we found no
-study that retained events outside the scoreable cohort in the population
-denominator while fixing both the model and the absolute referral budget.
+Prenatal risk triage makes this ambiguity visible. Pregnancies enter care at
+different times, and adverse outcomes are concentrated among records with no
+documented prenatal care or unknown start timing. An early-entry score ranks
+events inside its candidate gate; events outside the gate contribute zero
+reachable cases regardless of discrimination. National vital statistics retain both the eligible and
+excluded outcomes, making it possible to distinguish retrieval within the gate
+from reach across the complete target population.
 
-\begin{figure*}[t]
-\floatconts
-  {fig:study-design}
-  {\caption{Fixed-model, equal-budget study design. One outcome-specific
-  LightGBM model is fitted using CDC 2022, applied once to the CDC 2023
-  temporal test, and evaluated under early-entry and full-cohort eligibility.
-  Both policies select the same absolute number of records. Events in groups
-  unavailable to the early policy remain in the full-population denominator.}}
-  {\centering
-   \includegraphics[width=0.985\textwidth]{figures/figure1_study_design}}
-\end{figure*}
+We audit this distinction on CDC Natality preterm birth, neonatal intensive
+care unit (NICU) admission, and low birth weight. Figure~\ref{fig:headline}
+previews the result. At the nominal top 10\% operating point, all-record
+upper-bound evaluation selects roughly 88,000 additional records per outcome. Population
+event capture rises substantially, but about 62\% of the joint increase is
+allocated to the larger workload. A controlled mechanism grid then identifies
+conditions in which the resource change is large enough to reverse the
+fixed-budget conclusion.
 
-\section{Methods}
-\label{sec:methods}
+Our contributions are:
+\begin{enumerate}
+  \item \textbf{An auditable decision estimand.} Population event capture keeps
+  every target-population event in the denominator, while a complete
+  eligibility-by-budget design exposes the two fixed-budget contrasts and their
+  interaction.
+  \item \textbf{A national-scale measurement study.} Frozen 2022 scoring
+  pipelines applied to CDC 2023 show that the same top 10\% expands workload by
+  33.8\% and that capacity receives 61.6--62.2\% of the symmetric allocation
+  across three outcomes.
+  \item \textbf{A mechanism map and reporting profile.} An 81-condition stress
+  test locates sign-reversal regimes, and the resulting checklist makes the
+  candidate gate, absolute workload, and event denominator explicit.
+\end{enumerate}
 
-\paragraph{Data and population.}
-CDC Natality 2022 contained 3,676,029 records and was used for model
-development and internal held-out evaluation. CDC 2023 contained 3,605,081
-records and was used only as a temporal test. The primary population comprised
-U.S.-resident singleton births with a known outcome value.
+Code for the four-cell audit and synthetic experiments, together with the
+aggregate artifacts used to generate the reported figures and tables, will be
+released upon publication.
 
-\paragraph{Outcomes and eligibility.}
-Outcomes were preterm delivery (obstetric-estimate gestational age below 37
-weeks), neonatal intensive care unit (NICU) admission, and low birth weight
-(LBW; below 2,500~g). Early eligibility required prenatal-care initiation in
-months 1--3. Later entry, no prenatal care, and unknown timing remained in the
-full-population denominator but were unavailable to the early policy. Source
-code 99 and blank prenatal-care-month values were mapped to missing; 0 was
-retained as no prenatal care.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figures/figure1_headline.pdf}
+  \caption{The same nominal top 10\% encodes a different workload. Panel (a)
+  summarizes the target-specific CDC 2023 cohorts: moving from the early-entry
+  gate to the all-record upper bound increases the selected count from about
+  260,000 to 348,000. Panel (b) allocates the associated increase in population event
+  capture at $q=10\%$. Values inside bars are percentage-point allocations;
+  capacity contributes about 62\% of each total gain.}
+  \label{fig:headline}
+\end{figure}
 
-\paragraph{Fixed-model comparison.}
-For each outcome, one LightGBM model was fitted on CDC 2022 using the
-pre-specified \texttt{booking\_strict} features (350 trees, learning rate
-0.05, 31 leaves, and \texttt{min\_child\_samples}=100). We used no class
-weighting, oversampling, or hyperparameter optimization. Both policies used
-the same fitted model and the same CDC 2023 prediction vector.
+\FloatBarrier
 
-For target-specific full-population size $N_{\mathrm{full}}$, the absolute
-budget was
-\[
-B=\operatorname{round}(qN_{\mathrm{full}}),
-\qquad q\in\{0.05,0.10\}.
-\]
-Each policy selected the top $B$ risks within its eligible set. Let
-$E_{\mathrm{full}}$ be all population events, $E_{\mathrm{early}}$ events in
-the early cohort, and $\mathrm{TP}_{s}(B)$ events captured by policy $s$. We
-report
-\begin{align*}
-\mathrm{Ceiling} &= \frac{E_{\mathrm{early}}}{E_{\mathrm{full}}},\\
-\mathrm{Recall}_{s} &= \frac{\mathrm{TP}_{s}(B)}{E_s},\\
-\mathrm{Capture}_{s} &= \frac{\mathrm{TP}_{s}(B)}{E_{\mathrm{full}}}.
-\end{align*}
-The primary estimand was full-minus-early population event capture.
+\section{Related Work}
+\label{sec:related}
 
-\paragraph{Uncertainty and supporting analyses.}
-We used 500 paired, full-size, record-level bootstrap replicates with
-identical multiplicities for both policies and reconstructed top-$B$
-selection in every replicate. Percentile intervals were computed for the
-full-minus-early difference. At the 10\% budget, true positives were
-decomposed by care-entry group. Platt calibration was fitted on CDC 2022 and
-evaluated on held-out 2022 and temporal-test 2023 data. We also repeated the
-analysis among all U.S.-resident births; this remained sensitivity evidence
-because pregnancy-level clustering could not be reconstructed.
+\paragraph{Risk ranking under limited resources.}
+Prenatal case-management, imaging worklists, and clinical workflow studies
+connect risk scores to finite review or treatment capacity
+\citep{pan2017prenatal,annarumma2019triage,baltruschat2021worklist,jung2021framework,singh2023resource}.
+They motivate operating points such as top 5\%, top 10\%, or a fixed number of
+patients and show why use-aligned metrics matter. Calibrated subset selection
+similarly constructs shortlists with guarantees inside a supplied candidate
+pool \citep{wang2022screening}. These approaches make selection within a
+declared pool more reliable, while leaving cross-pool comparisons dependent on
+how the shortlist size changes with the pool.
 
+\paragraph{Selective access to clinical data and services.}
+Clinical records reflect who enters care, is tested, and receives a documented
+label. Informed presence and selection bias can alter both apparent risk and
+the population represented by an EHR cohort
+\citep{haneuse2016selection,goldstein2016presence,sisk2021informative}; disparate
+censorship describes related variation in testing and label availability
+\citep{chang2022censorship}. Health-service coverage frameworks separate
+service availability from realized coverage \citep{tanahashi1978coverage}.
+This literature establishes that the candidate gate is informative, but a
+top-fraction comparison adds a second moving quantity because the number served
+scales with the observed cohort.
 
-\begin{figure*}[t]
-\floatconts
-  {fig:fixed-budget-capture}
-  {\caption{Population event capture under equal absolute referral budgets.
-  Circles show early-entry eligibility and squares show full-cohort
-  eligibility. Connecting segments show the change in captured population
-  events; labels report the full-minus-early difference with its paired 95\%
-  bootstrap interval and the number of additional events.}}
-  {\centering
-   \includegraphics[width=0.97\textwidth]{figures/figure2_fixed_budget_capture}}
-\end{figure*}
+\paragraph{Evaluation validity and decomposition.}
+Clinical reporting guidance requires explicit target populations, intended
+use, discrimination, and calibration \citep{collins2024tripod}. Symmetric
+allocation across factor orderings is established decomposition machinery
+\citep{kitagawa1955components,shapley1953value,shorrocks2013decomposition}.
+Taken together, these conventions still leave the operational meaning of a metric
+implicit when candidate membership and absolute capacity change together. The
+case is common and concrete: a percentage-based budget is held numerically
+constant across cohorts, its absolute size moves, and the resulting gain is
+reported as if it represented one intervention.
+
+\FloatBarrier
+
+\section{Methodology}
+\label{sec:methodology}
+
+The audit fixes the target population, score vector, and event denominator,
+then crosses two candidate-set rules with two absolute budgets.
+Figure~\ref{fig:methodology} shows the resulting four cells and the two paths
+whose average yields the symmetric allocation.
+
+\begin{figure}[!htbp]
+  \centering
+  \begin{tikzpicture}[
+    font=\sffamily\scriptsize,
+    cell/.style={rounded corners=1mm, minimum width=3.85cm,
+      minimum height=.95cm, inner sep=3pt, align=center, line width=.6pt},
+    base/.style={cell, draw=black!38, fill=black!3},
+    capacity/.style={cell, draw=auditorange!70, fill=auditorange!9},
+    eligibility/.style={cell, draw=auditblue!65, fill=auditblue!9},
+    joint/.style={cell, draw=auditnavy!75, fill=auditnavy!8},
+    flowE/.style={-{Latex[length=1.8mm]}, line width=.75pt,
+      color=auditblue!85!black},
+    flowB/.style={-{Latex[length=1.8mm]}, line width=.75pt,
+      color=auditorange!90!black}
+  ]
+    \node[font=\sffamily\small\bfseries] at (2.175,2.15)
+      {Absolute selection budget};
+    \node[font=\sffamily\scriptsize\bfseries, align=center] at (0,1.48)
+      {Early-sized budget\\$b_e$};
+    \node[font=\sffamily\scriptsize\bfseries, align=center] at (4.35,1.48)
+      {All-record-sized budget\\$b_a$};
+
+    \node[anchor=east, font=\sffamily\scriptsize\bfseries, align=right]
+      at (-2.18,.52) {Early-entry\\candidates $S_e$};
+    \node[anchor=east, font=\sffamily\scriptsize\bfseries, align=right]
+      at (-2.18,-.98) {All-record\\upper bound $S_a$};
+
+    \node[base] (c00) at (0,.52)
+      {\textbf{$C_{00}$}\\$\capture(S_e,b_e)$};
+    \node[capacity] (c01) at (4.35,.52)
+      {\textbf{$C_{01}$}\\$\capture(S_e,b_a)$};
+    \node[eligibility] (c10) at (0,-.98)
+      {\textbf{$C_{10}$}\\$\capture(S_a,b_e)$};
+    \node[joint] (c11) at (4.35,-.98)
+      {\textbf{$C_{11}$}\\$\capture(S_a,b_a)$};
+
+    \draw[flowB] (c00.east) -- (c01.west);
+    \draw[flowB] (c10.east) -- (c11.west);
+    \draw[flowE] (c00.south) -- (c10.north);
+    \draw[flowE] (c01.south) -- (c11.north);
+
+    \node[font=\sffamily\scriptsize, text=black!62] at (2.175,-1.92)
+      {Shared across cells: score vector $r$ and full-population event denominator $E$.};
+  \end{tikzpicture}
+  \caption{Eligibility--capacity audit. Rows vary the candidate set and columns
+  vary the absolute selection budget while the score vector and full-population
+  event denominator remain fixed. Blue arrows change candidate eligibility;
+  orange arrows change capacity. Averaging the two paths from $C_{00}$ to
+  $C_{11}$ gives the symmetric Shapley allocation, whereas $C_{11}-C_{00}$ is
+  the usual same-$q$ comparison and changes both factors.}
+  \label{fig:methodology}
+\end{figure}
+
+\subsection{Target population and scoring study}
+
+We use CDC Natality public-use live-birth records and official field
+definitions \citep{cdcNatality,cdcWorksheet}. CDC 2022 supplies model
+development with an 80/20 train/validation split; the frozen pipelines generate
+the shared score vectors analyzed in CDC 2023. Model fitting and hyperparameter
+selection use CDC 2022 exclusively; CDC 2023 is the temporal cohort in which
+the audit hypothesis was developed and evaluated. The target population contains
+U.S.-resident singleton live births with a known outcome: preterm birth below
+37 completed obstetric-estimate weeks ($N=3{,}480{,}382$, 303,001 events), NICU
+admission ($N=3{,}476{,}584$, 303,285 events), and birth weight below 2,500 g
+($N=3{,}480{,}316$, 243,776 events).
+
+Prenatal-care month defines four mutually exclusive groups: early entry in
+months 1--3, later documented entry in months 4--10, no prenatal care, and
+unknown start timing. The early candidate set contains months 1--3. The
+documented-start set contains months 1--10. The all-record set adds no-care and
+unknown-timing records and therefore bounds candidate and event availability
+under retrospective complete scoring. The care-month rule operationalizes
+documented entry into prenatal care rather than feature-level EHR availability;
+the birth-certificate model serves as a shared retrospective ranking instrument.
+
+The baseline-oriented score uses nine maternal birth-certificate variables:
+race, height, pre-pregnancy BMI and weight, previous live births now living,
+previous live births now dead, other pregnancy outcomes, pre-pregnancy
+diabetes, and pre-pregnancy hypertension. Outcome, delivery, and neonatal
+fields are excluded. Numeric variables use development-set median imputation
+and standardization; race uses most-frequent imputation and one-hot encoding.
+One LightGBM model per outcome uses 350 trees, learning rate 0.05, 31 leaves,
+minimum child size 100, and seed 2026 \citep{ke2017lightgbm}. The audit compares
+candidate and budget policies on a shared score vector while holding the model
+family constant.
+
+\subsection{Decision metrics}
+
+Let $\mathcal P$ contain $N$ records and $E=\sum_{i\in\mathcal P}Y_i$ events.
+For candidate set $S$, event count $E_S$, and integer budget $b$, deterministic
+tie breaking defines the $b$ highest scores $\topset(S,b)$. Their true-positive
+count is
+\begin{equation}
+  \operatorname{TP}(S,b)=\sum_{i\in\topset(S,b)}Y_i.
+  \label{eq:tp}
+\end{equation}
+We report both within-gate performance and population reach:
+\begin{align}
+  \operatorname{Precision}(S,b)&=\frac{\operatorname{TP}(S,b)}{b}, &
+  \receligible(S,b)&=\frac{\operatorname{TP}(S,b)}{E_S},
+  \label{eq:within_metrics}\\
+  \capture(S,b)&=\frac{\operatorname{TP}(S,b)}{E}, &
+  \ceiling(S)&=\frac{E_S}{E}.
+  \label{eq:population_metrics}
+\end{align}
+Population capture factors into retrieval and reach,
+\begin{equation}
+  \capture(S,b)=\receligible(S,b)\,\ceiling(S).
+  \label{eq:identity}
+\end{equation}
+Each result therefore reports target-population $N$ and $E$, eligible $n$ and
+$E_S$, exact selected $n$, precision, eligible recall, population capture, and
+the event ceiling. ROC-AUC and average precision (AP) provide a ranking-signal
+check; the four-cell contrasts carry the primary decision claim.
+
+\subsection{Four-cell eligibility--capacity audit}
+
+Let $S_e\subseteq S_a$ be early and all-record candidate sets. A nominal
+fraction $q$ induces $b_e=\operatorname{round}(q|S_e|)$ and
+$b_a=\operatorname{round}(q|S_a|)$. With $b_a\leq |S_e|$, the complete design is
+\begin{equation}
+  C_{uv}=\capture(S_u,b_v),\qquad u,v\in\{0,1\},
+  \label{eq:fourcell}
+\end{equation}
+where 0 denotes early and 1 denotes all-record eligibility or capacity. The
+usual cohort-relative contrast is $\Delta=C_{11}-C_{00}$. Its interaction is
+$I=C_{11}-C_{10}-C_{01}+C_{00}$. We retain both fixed-budget eligibility
+contrasts and summarize the joint change with the standard symmetric Shapley
+allocation \citep{shapley1953value}:
+\begin{equation}
+\begin{aligned}
+  \phi_E&=\tfrac12\big[(C_{10}-C_{00})+(C_{11}-C_{01})\big],\\
+  \phi_B&=\tfrac12\big[(C_{01}-C_{00})+(C_{11}-C_{10})\big].
+\end{aligned}
+\label{eq:shapley}
+\end{equation}
+The exact identity $\Delta=\phi_E+\phi_B$ holds, and
+$s_B=\phi_B/\Delta$ gives the symmetric capacity share for positive $\Delta$.
+For a frozen deterministic ranking, increasing $b$ adds nested positions, so
+the capacity component is non-negative; expanding $S$ at fixed $b$ can have
+either sign. A uniformly random ranking supplies the mechanical reference
+$\operatorname{E}[\capture(S,b)]=(b/|S|)(E_S/E)$.
+
+\subsection{Evaluation and mechanism stress test}
+
+The empirical audit uses $q\in\{0.05,0.10\}$. Point estimates are accompanied
+by 500 paired full-size empirical resamples per outcome and $q$. Each resample
+uses common record multiplicities across all four cells while holding the
+observed scores and absolute budgets fixed. The resulting central 95\% ranges
+measure conditional stability of the reported four-cell contrasts.
+
+The controlled simulation crosses availability fractions 0.5, 0.7, and 0.9;
+risk--availability relationships in which higher risk is less available,
+independent, or more available; score noise levels 0.5, 1, and 2; and
+$q\in\{0.05,0.10,0.20\}$. These factors yield 81 conditions. Each of 100
+repetitions contains 100,000 evaluation records and an independent 50,000-record
+threshold-selection population. Outcomes, availability, and scores are shared
+across the compared policies within a repetition.
 
 \section{Results}
 \label{sec:results}
+\FloatBarrier
 
-\paragraph{Availability imposed an event ceiling.}
-Early eligibility covered 74.71--74.73\% of CDC 2023 records but only 71.83\%
-of preterm events, 70.62\% of NICU admissions, and 69.39\% of LBW events
-(Table~\ref{tab:main-results}). Thus, 28--31\% of events were outside the
-early-scoreable cohort before classifier error was considered.
+\subsection{Candidate eligibility and event ceilings}
 
-\paragraph{Full eligibility increased capture at equal capacity.}
-At the 10\% budget, full-cohort capture exceeded early-entry capture by 2.58,
-2.73, and 3.43 percentage points for preterm delivery, NICU admission, and
-LBW, representing 7,821, 8,271, and 8,356 additional events. At 5\%, gains
-were 1.38, 1.51, and 1.88 points (Figure~\ref{fig:fixed-budget-capture}). Full
-precision was also higher at the equal 10\% budget: 18.64\% versus 16.39\% for
-preterm delivery, 17.88\% versus 15.50\% for NICU admission, and 16.80\%
-versus 14.40\% for LBW.
+Early entry contains about 74.7\% of target-population records, but only 71.8\%
+of preterm events, 70.6\% of NICU events, and 69.4\% of low-birth-weight events.
+Before ranking begins, the early gate therefore leaves 28.2--30.6\% of events
+outside its reachable population. Including every documented prenatal-care
+start in months 1--10 raises the event ceiling to 91.1--92.1\%.
 
+In absolute terms, early eligibility excludes 74,624--89,111 outcome events
+across the three tasks. Even the documented-start gate leaves 20,558--27,087
+events outside the candidate population. These are reach constraints: changing
+the ranking leaves events outside its decision set unreachable.
 
+The excluded records carry concentrated risk. Outcome prevalence among no-care
+records is 2.4--2.7 times the early-entry prevalence across the three targets;
+unknown-timing records are 1.7--1.9 times higher. Candidate expansion therefore
+changes both population reach and case mix, making a full-population event
+denominator essential.
 
-\begin{table*}[t]
-\floatconts
-  {tab:main-results}
-  {\caption{CDC 2023 temporal-test results at the target-specific 10\%
-  absolute referral budget. Capture is population event capture; intervals
-  are paired bootstrap percentile intervals from 500 replicates.}}
-  {\centering
-  \scriptsize
-  \setlength{\tabcolsep}{2.9pt}
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lrrrrrrrrr}
-  \toprule
-  Outcome &
-  \shortstack{Full\\$N$} &
-  \shortstack{Early\\$N$ (\%)} &
-  \shortstack{Events\\$n$ (\%)} &
-  \shortstack{Event\\ceiling} &
-  \shortstack{Budget\\$B$} &
-  \shortstack{Early\\capture} &
-  \shortstack{Full\\capture} &
-  \shortstack{$\Delta$ capture, pp\\(95\% CI)} &
-  \shortstack{Additional\\TP} \\
-  \midrule
-  Preterm delivery & 3{,}480{,}382 & 2{,}601{,}060 (74.73) &
-  303{,}001 (8.71) & 71.83 & 348{,}038 & 18.83 & 21.41 &
-  2.58 (2.47--2.70) & 7{,}821 \\
-  NICU admission & 3{,}476{,}584 & 2{,}597{,}274 (74.71) &
-  303{,}285 (8.72) & 70.62 & 347{,}658 & 17.77 & 20.50 &
-  2.73 (2.62--2.84) & 8{,}271 \\
-  Low birth weight & 3{,}480{,}316 & 2{,}600{,}093 (74.71) &
-  243{,}776 (7.00) & 69.39 & 348{,}032 & 20.56 & 23.98 &
-  3.43 (3.28--3.57) & 8{,}356 \\
-  \bottomrule
-  \end{tabular}}}
-\end{table*}
+\input{tables/table_candidate_gate.tex}
 
-\paragraph{Uncertainty was consistently positive.}
-All CDC 2023 intervals were above zero. At 10\%, intervals were 2.47--2.70
-points for preterm delivery, 2.62--2.84 for NICU admission, and 3.28--3.57
-for LBW. Held-out CDC 2022 produced similar differences of 2.60, 2.59, and
-3.12 points, respectively, with intervals of 2.26--2.98, 2.29--2.95, and
-2.65--3.62 points.
+\subsection{Eligibility--capacity accounting under \texorpdfstring{top-$q$}{top-q} selection}
 
-\paragraph{Gains arose outside the early cohort.}
-At 10\%, full eligibility gained 22,271 preterm, 20,557 NICU, and 21,857 LBW
-true positives from later-entry, no-care, and unknown-timing groups. The same
-budget reallocation reduced true positives within months 1--3 by 14,450,
-12,286, and 13,501, producing the net gains above.
+Figure~\ref{fig:headline} and Table~\ref{tab:main_results} connect the nominal
+operating point to its actual workload. Across outcomes, the selected count
+increases from approximately 260,000 to 348,000. Population event capture rises
+from 14.63\% to 20.30\% for preterm birth, 13.93\% to 19.52\% for NICU, and
+16.06\% to 22.83\% for low birth weight. These are relative gains of
+38.8\%, 40.1\%, and 42.2\%, respectively.
 
-\paragraph{Supporting analyses were consistent.}
-Raw CDC 2023 full-cohort models had calibration intercepts from $-0.019$ to
-$0.015$ and slopes from 0.995 to 0.998; Platt scaling did not improve Brier
-score. All-birth 10\% differences remained positive at 2.18, 2.51, and 2.85
-points for preterm delivery, NICU admission, and LBW.
+The proportional policy adds 87,931--88,023 service slots per outcome and
+captures 16,505--17,177 additional events. Its marginal yield is therefore
+18.8--19.5 additional events per 100 added slots, equivalent to 5.1--5.3
+additional selections per extra captured event. Thus, the higher capture is
+obtained under an explicitly 33.8\% larger service capacity.
+
+\input{tables/table1_shapley_q10.tex}
+
+The four-cell audit changes the interpretation of those gains. Symmetric
+accounting assigns 2.11--2.60 percentage points to eligibility and
+3.47--4.17 points to additional capacity, placing 61.6--62.2\% of the joint
+contrast on the workload increase. Holding the early budget fixed yields
+eligibility gains of 1.89--2.27 points; holding the all-record budget fixed
+yields 2.32--2.93 points. Both are materially smaller than the joint
+5.59--6.77-point cohort-relative contrast.
+
+The pattern persists at $q=5\%$, where capacity receives 63.9--65.6\% of the
+symmetric allocation. Conditional ranges remain above 60.4\% for every target
+and operating point. A random ranking allocates 79.7--87.9\% to capacity at
+$q=10\%$, showing that a majority capacity allocation can arise mechanically
+under a proportional budget. The learned ranking shifts more of
+the joint gain toward eligibility because the added candidate groups contain
+greater event mass. Complete four-cell counts and both operating points appear
+in Appendix~\ref{app:shapley}.
+
+\subsection{Fixed-budget and transported-threshold policies}
+
+Table~\ref{tab:policy_contrasts} compares three policies on the same frozen
+score vector. Cohort-relative top-10\% evaluation jointly changes eligibility
+and workload. Fixing the all-record absolute budget isolates candidate
+expansion: capture increases by 2.32--2.93 points, with exactly the same number
+selected on both sides. A threshold chosen once on the CDC 2022 validation
+split selects 9.15--9.82\% of early-entry records and 10.20--10.40\% of all
+records in CDC 2023. Under that transported threshold, the all-record worklist
+is 1.42--1.49 times larger and capture increases by 6.36--8.19 points.
+
+\input{tables/table_policy_contrasts_q10.tex}
+
+These contrasts differ because they implement different resource commitments
+on a shared ranking. A complete cross-cohort claim therefore states its
+candidate rule, selected count, and event denominator alongside the gain.
+
+The cross-year workload check points in the same direction. Transporting the
+stored CDC 2022 top-10\% score cutoffs to target-specific CDC 2024 cohorts
+selected 10.65\% of preterm records, 9.50\% of NICU records, and 8.30\% of
+low-birth-weight records. Relative to a 10\% service budget, these rates create
+22,668 additional preterm slots but leave 17,621 NICU and 59,716
+low-birth-weight slots unfilled. A fixed score cutoff therefore defines a
+workload that can move across years; the exact selected count remains the
+operational quantity for capacity planning.
+
+\subsection{Controlled mechanism stress test}
+
+Figure~\ref{fig:synthetic} maps the protocol difference across all 81 synthetic
+conditions. Eighteen conditions report a positive cohort-relative gain while
+candidate expansion at the all-record absolute budget reduces population
+capture. Nine have a central replicate range entirely below zero. Every
+reversal arises when higher-risk records are preferentially available, so the
+newly admitted pool is lower risk and can displace selected events.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/figure3_synthetic_stress_test.pdf}
+  \caption{Full-grid mechanism stress test. Panel (a) compares the
+  cohort-relative conclusion with candidate expansion at the all-record-derived
+  absolute budget $b_a$. The shaded quadrant contains sign reversals: the joint
+  top-$q$ contrast is positive while fixed-budget eligibility expansion is
+  negative. Panel (b) gives replicate-level reversal frequency for conditions
+  where higher risk is more available. Marker shape denotes score quality.}
+  \label{fig:synthetic}
+\end{figure}
+
+At 70\% availability, medium score quality, and $q=10\%$, for example,
+cohort-relative capture increases 5.52 points while fixed-budget candidate
+expansion changes capture by $-0.28$ points; 93 of 100 repetitions reverse.
+The largest mean absolute interaction is 9.49 points. In CDC 2023, all six
+fixed-budget eligibility contrasts remain positive, so the ambiguity changes
+effect magnitude. The controlled grid shows that selective availability can
+also change effect direction.
+
+\subsection{Temporal score diagnostics}
+
+The four-cell accounting fixes one CDC 2023 score vector, isolating its
+within-year policy contrasts from score drift. A temporal check additionally
+shows that the frozen 2022 pipelines retain similar aggregate discrimination in
+CDC 2023 and provide a transported ranking for the policy audit.
+Across outcomes, ROC-AUC changes by at most 0.003 and average precision by at
+most 0.003 from the CDC 2022 validation split to CDC 2023. CDC 2023 Brier skill
+relative to a prevalence-only forecast is 1.7--2.4\%. These diagnostics anchor
+the empirical audit in transported scores while preserving the decision policy
+as the primary estimand.
+
+\input{tables/table_score_transport.tex}
+
+\subsection{Sensitivity and robustness}
+\label{sec:sensitivity}
+
+Two feature ablations preserve the allocation pattern. Removing maternal race
+and refitting each outcome model at $q=10\%$ leaves capacity shares of
+60.9--62.4\%. A separate eight-feature specification removes prior other
+pregnancy outcomes (\texttt{prior\_terminations}) and repeats the complete audit
+at both budgets with paired resampling. Capacity still accounts for
+61.5--64.3\% of the joint contrast, and all interaction ranges remain above
+zero (+0.32 to +0.69 percentage points). The result therefore persists across
+two alternative conservative landmark specifications.
 
 \FloatBarrier
 
 \section{Discussion}
 \label{sec:discussion}
 
-Restricting scoring to prenatal-care entry in months 1--3 reduced population
-capture after fixing the model, predictions, and absolute budget. The result
-is not a claim about a superior architecture: eligibility determines which
-events are available for selection. It also differs from selective
-prediction, which abstains after a scoreable case reaches the model. Here,
-events outside the early cohort remain in the denominator because they remain
-part of the population the triage policy is intended to serve.
+\paragraph{Resource interpretation of top-$q$ evaluation.}
+Top-$q$ evaluation is operationally coherent when service volume scales with
+the candidate population; a fixed absolute budget answers the constrained
+capacity question. The distinction is material here: the headline
+38.8--42.2\% relative capture gain includes a 33.8\% workload increase. The
+four-cell design makes that resource policy visible and supplies both
+fixed-budget contrasts.
 
-The mechanism analysis showed the operational trade-off. Full eligibility
-reallocated the same referral capacity from some early-entry records toward
-high-risk later-entry, no-care, and unknown-timing records. Gains outside the
-early cohort exceeded losses within it for all outcomes.
+\paragraph{Separating reach, ranking, and capacity.}
+The candidate gate determines the event ceiling, ranking determines which
+eligible cases approach the cutoff, and capacity determines how many positions
+can be filled. Freezing the score vector isolates broader reach at fixed
+capacity from proportional resource expansion; the interaction records when
+the value of one lever depends on the other. Transported score cutoffs form a
+third regime in which workload emerges from the subsequent score distribution,
+as the CDC 2024 check illustrates.
 
-Limitations include retrospective administrative data, non-optimized 5\% and
-10\% capacity scenarios, temporal rather than cross-system evaluation, and no
-causal interpretation of care entry. Multiple-birth records may be dependent,
-and pregnancy-level clustered uncertainty was unavailable. Secondary
-\texttt{pregnancy\_oracle} variables were not reliably available at the early
-clinical landmark and are not presented as deployable inputs.
+\paragraph{Applicability across deterministic score vectors.}
+The four-cell accounting accepts any fixed deterministic score vector, and capacity monotonicity
+follows from the nesting of top-$b$ selections independently of the LightGBM
+functional form. Candidate expansion at fixed $b$ depends on which scores and
+events enter the pool, so its sign remains empirical. The random-ranking
+reference and the controlled grid spanning three score-noise levels recover
+both properties: capacity usually explains most of a proportional-budget
+contrast, while selective availability can reverse the fixed-budget effect.
+Model choice changes where a study lies in this mechanism map; the audit
+defines the decision comparison around it.
 
-Clinical triage evaluations should separately report scoreability ceiling,
-conditional performance among eligible records, and population event capture
-under an explicit absolute budget.
+\paragraph{A recommended reporting profile.}
+Based on the empirical and controlled audits, Table~\ref{tab:reporting_profile}
+proposes a minimum reporting checklist for cross-cohort top-$q$ comparisons.
+The checklist links each reported number to the target population, candidate
+gate, resource rule, or decomposition needed to interpret the operating point.
 
-\iffinal
-\acks{Acknowledgments will be added only to the camera-ready manuscript.}
-\fi
+\begin{table}[!htbp]
+  \centering
+  \caption{Minimum reporting checklist for cross-cohort top-$q$ evaluation.
+  The final column illustrates each item with the CDC 2023 audit.}
+  \label{tab:reporting_profile}
+  \footnotesize
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}p{0.18\linewidth}p{0.37\linewidth}p{0.37\linewidth}@{}}
+    \toprule
+    Required item & Minimum report & Example from this study \\
+    \midrule
+    Target population & Population rule, $N$, total events $E$, and event denominator & CDC 2023 singleton births; $N\approx3.48$M; all target events remain in the denominator \\
+    Candidate gate & Eligibility rule, eligible $n$, $E_S$, and event ceiling $E_S/E$ & Care entry in months 1--3; $n\approx2.60$M; ceiling 69.4--71.8\% \\
+    Resource rule & Fraction $q$ or absolute budget $b$, with exact selected $n$ & Top 10\%; selected $n$: 260k$\rightarrow$348k (+33.8\% workload) \\
+    Operating result & Precision, eligible recall, and population event capture & Capture: 13.93--16.06\%$\rightarrow$19.52--22.83\% \\
+    Cross-cohort audit & Four cells, fixed-budget contrasts, interaction, and symmetric allocation & Capacity receives 61.6--62.2\% of the joint allocation \\
+    \bottomrule
+  \end{tabular*}
+\end{table}
 
-\nolinenumbers
-\begingroup
-\small
-\setlength{\bibsep}{2pt}
+The profile applies wherever a score becomes a finite worklist: imaging queues,
+screening, case management, and public-sector allocation all require a declared
+fixed, proportional, or threshold-driven capacity rule. Exact selected counts
+prevent a stable percentage from disguising a changing workload.
+
+\paragraph{Implementation in existing evaluation pipelines.}
+Stored identifiers, outcomes, candidate masks, and one score vector are enough
+to construct the four cells. Implementations record both budgets, selected
+events, and the full-population denominator, then reuse common record weights
+for paired resampling. Aggregate counts and configurations provide an auditable
+path from a top-$q$ result to its service policy without releasing row-level
+clinical data.
+
+\FloatBarrier
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Top-fraction comparisons across cohorts encode service decisions in addition
+to ranking summaries. In the CDC audit, the same nominal top 10\% expands the
+workload by one third, and symmetric accounting assigns about 62\% of the
+capture gain to that capacity increase. Controlled experiments identify
+conditions in which cohort-relative and fixed-budget conclusions have opposite
+signs. Reporting the target population, candidate rule, exact selected count,
+full-population event denominator, and fixed-budget contrast makes the policy
+claim auditable. The present scope is a birth-certificate score and a
+care-entry eligibility proxy; prospective EHR landmarks, subgroup budgets, and
+additional temporal cohorts provide the next transport tests.
+
+\clearpage
+
+\bibliographystyle{plainnat}
 \bibliography{references}
-\endgroup
+
+\appendix
+
+\section{Outcome, Model, and Cohort Details}
+\label{app:design}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Baseline-oriented birth-certificate variables used by the frozen
+  ranking instrument. Encounter-specific availability at months 1--3 requires
+  validation in a prospective EHR source.}
+  \label{tab:features}
+  \small
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ll@{}}
+    \toprule
+    Feature & CDC source meaning \\
+    \midrule
+    Maternal race & Maternal characteristic on birth record \\
+    Maternal height & Maternal characteristic on birth record \\
+    Pre-pregnancy BMI & Derived from pre-pregnancy measures \\
+    Pre-pregnancy weight & Weight before pregnancy \\
+    Previous live births now living & Previous live-born infants still living \\
+    Previous live births now dead & Previous live-born infants no longer living \\
+    Other pregnancy outcomes & Non-live-birth outcomes; may include current pregnancy \\
+    Pre-pregnancy diabetes & Diabetes diagnosed before this pregnancy \\
+    Pre-pregnancy hypertension & Hypertension diagnosed before this pregnancy \\
+    \bottomrule
+  \end{tabular*}
+\end{table}
+
+For CDC 2023 preterm records, early entry contains 2,601,060 records and
+217,632 events; later entry contains 739,298 and 58,282; no care contains
+76,520 and 17,387; unknown timing contains 63,504 and 9,700. Target-specific
+counts differ slightly because each outcome has its own missing-label
+exclusions. Source code 99 is normalized to missing before cohort construction,
+while source value 0 denotes no prenatal care.
+
+\section{Complete Four-Cell Results}
+\label{app:shapley}
+
+\input{tables/table_full_shapley.tex}
+
+\input{tables/table_four_cells.tex}
+
+The point-estimate budgets at $q=5\%$ are 130,053/174,019 for preterm,
+129,864/173,829 for NICU, and 130,005/174,016 for low birth weight
+(early/all-record). At $q=10\%$ they are 260,106/348,038, 259,727/347,658, and
+260,009/348,032. These observed integer budgets remain fixed across empirical
+resamples.
+
+\section{Synthetic Grid Details}
+\label{app:synthetic}
+
+The synthetic experiment crosses three availability fractions, three
+risk--availability slopes, three score-noise levels, and three selection
+fractions. Intercepts are solved numerically so the target marginal prevalence
+or availability fraction holds before Monte Carlo variation. Common random
+numbers are used across all 81 conditions within each repetition, and the
+available-subset and all-population policies share outcomes and score vectors.
+Reported 2.5th and 97.5th percentiles describe the replicate distribution.
+
+The score-noise levels $\sigma_R=0.5,1,2$ imply expected correlations between
+score and latent risk of approximately 0.894, 0.707, and 0.447. The largest
+absolute replicate-level interaction is 10.72 percentage points. Full
+condition summaries and replicate outputs are retained in the prepared release
+bundle.
+
+\section{Audit Identities and Artifacts}
+\label{app:reproducibility}
+
+\paragraph{Deterministic identity checks.}
+For fixed $S$, scores, and deterministic tie breaking,
+$\topset(S,b_e)\subseteq\topset(S,b_a)$ whenever $b_e\leq b_a$. Increasing the
+budget adds exactly $b_a-b_e$ ranked positions and between zero and
+$b_a-b_e$ events. Both marginal capacity contrasts are therefore non-negative,
+as is their average $\phi_B$. Substituting Equation~\ref{eq:shapley} also gives
+$\phi_E+\phi_B=C_{11}-C_{00}$ exactly. These statements concern a shared score
+vector; retraining introduces an additional factor.
+
+\paragraph{Artifacts.}
+
+All manuscript figures and tables are generated from included CSV files.
+Verification scripts assert the six primary Shapley rows, 500 paired empirical
+resamples per target and budget, exact accounting identities, all 81 synthetic
+conditions, 18 mean sign reversals, and 9 conditions whose central replicate
+range is negative. The prepared release bundle contains aggregate inputs,
+figure and table generators, verification scripts, the locked synthetic
+configuration and runner, synthetic replicate outputs, and the temporal
+threshold-transport script. It redistributes no individual-level Natality
+records. Use of the public-use files follows the NCHS Data User Agreement
+\citep{cdcDataAgreement}; LightGBM is distributed under the MIT License
+\citep{lightgbmRepo}.
+
+\paragraph{Raw-data reconstruction.}
+The CDC 2022 split is drawn before target-specific exclusions with
+\texttt{default\_rng(2026)}: 20\% enters validation and the remainder enters
+training, on which preprocessing is fitted. Unknown outcomes are excluded
+target-wise, and original row order breaks score ties. Thresholds are selected
+on the target-specific CDC 2022 all-record validation pool and applied with
+$\geq$. Empirical and synthetic seeds are 2027 and 2028. Section~3 and
+Appendices~A--C specify the remaining cohort, model, and estimand details.
+
+\clearpage
+\input{checklist}
 
 \end{document}
