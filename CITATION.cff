@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Please cite the associated TAE 2026 workshop paper when using this research code."
+type: software
+title: "Same Top Fraction, Different Workload: Auditing Eligibility and Capacity in Clinical Risk Evaluation"
+authors:
+  - family-names: Oganisyan
+    given-names: Vache
+  - family-names: Lvov
+    given-names: Dmitry
+  - family-names: Pershin
+    given-names: Ilya
+repository-code: "https://github.com/vache4ogan/prenatal-risk-scoreability"
+url: "https://openreview.net/forum?id=puYbvC47rw"
+version: "2026-camera-ready"
+keywords:
+  - clinical risk evaluation
+  - eligibility
+  - capacity
+  - reproducibility

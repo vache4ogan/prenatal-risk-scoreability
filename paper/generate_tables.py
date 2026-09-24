@@ -412,6 +412,34 @@ def table_three_protocols() -> None:
     write(OUT / "table_three_protocols_q10.tex", lines)
 
 
+def table_temporal_2024() -> None:
+    data = pd.read_csv(DATA / "temporal_2024/summary.csv")
+    if len(data) != 6 or data.duplicated(["target", "nominal_fraction"]).any():
+        raise ValueError("Expected six distinct temporal replication contrasts")
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{CDC 2024 four-cell replication with the frozen 2022 pipelines. Capture changes and allocations are percentage points; capacity shares include central 95\% ranges from 500 paired resamples.}",
+        r"\label{tab:temporal_2024}",
+        r"\small",
+        r"\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrrrrr@{}}",
+        r"\toprule",
+        r"Outcome & $q$ & Joint gain & Eligibility & Capacity & Capacity share (\%) \\",
+        r"\midrule",
+    ]
+    for target in TARGET_ORDER:
+        for q in [0.05, 0.1]:
+            row = data.loc[(data.target == target) & np.isclose(data.nominal_fraction, q)].iloc[0]
+            lines.append(
+                f"{TARGET_LABEL[target]} & {q:.0%} & "
+                f"{100*row.total_topq_contrast:.2f} & {100*row.shapley_availability:.2f} & "
+                f"{100*row.shapley_capacity:.2f} & {100*row.capacity_share:.1f} "
+                f"[{100*row.capacity_share_lower:.1f}, {100*row.capacity_share_upper:.1f}] \\\\"
+            .replace("%", r"\%"))
+    lines.extend([r"\bottomrule", r"\end{tabular*}", r"\end{table}"])
+    write(OUT / "table_temporal_2024.tex", lines)
+
+
 def main() -> None:
     shapley, shares = load_shapley()
     table_main_shapley(shapley, shares)
@@ -422,7 +450,8 @@ def main() -> None:
     table_four_cells(shapley)
     table_model_sanity()
     table_three_protocols()
-    print("PASS: generated 8 LaTeX tables from source-data CSV files")
+    table_temporal_2024()
+    print("PASS: generated 9 LaTeX tables from source-data CSV files")
 
 
 if __name__ == "__main__":

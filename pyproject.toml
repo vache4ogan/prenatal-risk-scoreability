@@ -22,5 +22,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
 
+[tool.setuptools]
+packages = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 # Exact versions must be restored from the canonical ClearML
 # package_versions.txt artifact before a fully locked rerun.

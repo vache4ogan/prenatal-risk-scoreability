@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -205,6 +206,45 @@ def verify_synthetic() -> None:
         fail("At least one synthetic manifest invariant failed")
 
 
+def verify_synthetic_specification() -> None:
+    import numpy as np
+    import yaml
+
+    config = yaml.safe_load(
+        (ROOT / "analysis_code/configs/synthetic_experiment_shapley81.yaml")
+        .read_text(encoding="utf-8")
+    )
+    simulation = config["simulation"]
+    expected = {
+        "seed": 2028, "replicates": 100, "population_n": 100000,
+        "calibration_n": 50000, "outcome_prevalence": 0.1,
+        "outcome_risk_slope": 1.0, "quadrature_nodes": 80,
+        "availability_fractions": [0.5, 0.7, 0.9],
+    }
+    for key, value in expected.items():
+        if simulation[key] != value:
+            fail(f"Synthetic manuscript/config mismatch: {key}")
+    if [x["slope"] for x in simulation["availability_associations"]] != [-1, 0, 1]:
+        fail("Synthetic eligibility slopes drifted")
+    if [x["noise_sd"] for x in simulation["model_qualities"]] != [0.5, 1, 2]:
+        fail("Synthetic score noise levels drifted")
+    if config["evaluation"]["fractions"] != [0.05, 0.1, 0.2]:
+        fail("Synthetic selection fractions drifted")
+
+    # Independently check the rounded intercepts printed in Appendix C.
+    nodes, weights = np.polynomial.hermite.hermgauss(80)
+    z, w = np.sqrt(2) * nodes, weights / np.sqrt(np.pi)
+    intercepts = [
+        (0.1, 1, -2.5642215001), (0.5, 0, 0), (0.5, 1, 0),
+        (0.7, 0, 0.8472978604), (0.7, 1, 1.0184006520),
+        (0.9, 0, 2.1972245773), (0.9, 1, 2.5642215001),
+    ]
+    for target, slope, intercept in intercepts:
+        marginal = float(np.sum(w / (1 + np.exp(-intercept - slope * z))))
+        if abs(marginal - target) > 1e-10:
+            fail(f"Incorrect synthetic intercept: {target}, {slope}, {intercept}")
+
+
 def verify_protocol_and_score_claims() -> None:
     protocol_rows = read_csv("canonical_protocol_results.csv")
     q10 = [row for row in protocol_rows if close(float(row["nominal_fraction"]), 0.10)]
@@ -298,14 +338,14 @@ def verify_temporal_2024() -> None:
         fail(f"Expected three CDC 2024 workload rows, found {len(rows)}")
 
     expected_differences = {
-        "target_preterm": 22668,
-        "target_nicu": -17621,
-        "target_lbw": -59716,
+        "target_preterm": 21112,
+        "target_nicu": 22400,
+        "target_lbw": 6952,
     }
     expected_rates = {
-        "target_preterm": 0.10645300872812986,
-        "target_nicu": 0.09498023126528163,
-        "target_lbw": 0.08300824431442781,
+        "target_preterm": 0.10601005471449963,
+        "target_nicu": 0.10638111795976517,
+        "target_lbw": 0.10197807776072423,
     }
     for row in rows:
         target = row["target"]
@@ -315,9 +355,9 @@ def verify_temporal_2024() -> None:
         true_positive_n = int(row["TP"])
         nominal_selected_n = int(row["nominal_selected_n"])
         exact_threshold = float(row["canonical_threshold_exact"])
-        used_threshold = float(row["threshold_used_6dp"])
+        used_threshold = float(row["threshold_used"])
 
-        if not close(used_threshold, round(exact_threshold, 6), tol=1e-12):
+        if not close(used_threshold, exact_threshold, tol=1e-15):
             fail(f"CDC 2024 threshold precision mismatch for {target}")
         if selected_n - nominal_selected_n != expected_differences[target]:
             fail(f"CDC 2024 workload difference drifted for {target}")
@@ -331,6 +371,51 @@ def verify_temporal_2024() -> None:
             fail(f"CDC 2024 capture arithmetic failed for {target}")
         if not close(float(row["selection_rate"]), expected_rates[target]):
             fail(f"CDC 2024 selection rate drifted for {target}")
+
+    import numpy as np
+    import pandas as pd
+
+    directory = DATA / "temporal_2024"
+    manifest = json.loads((directory / "run_manifest.json").read_text())
+    if manifest["status"] != "PASS" or manifest["model_fitting"]:
+        fail("CDC 2024 replication must complete without refitting")
+    for name, expected in manifest["hashes"].items():
+        if hashlib.sha256((directory / name).read_bytes()).hexdigest() != expected:
+            fail(f"CDC 2024 run-manifest hash mismatch: {name}")
+    cells = pd.read_csv(directory / "four_cells.csv")
+    summary = pd.read_csv(directory / "summary.csv")
+    replicates = pd.read_csv(directory / "bootstrap_replicates.csv")
+    if (len(cells), len(summary), len(replicates)) != (24, 6, 3000):
+        fail("Incomplete CDC 2024 four-cell replication")
+    for row in summary.to_dict("records"):
+        c00, c10, c01, c11 = [row[k] for k in
+                            ["C00_early_Bearly", "C10_all_Bearly", "C01_early_Ball", "C11_all_Ball"]]
+        phi_e = ((c10-c00)+(c11-c01))/2
+        phi_b = ((c01-c00)+(c11-c10))/2
+        for actual, expected in [(row["shapley_capacity"], phi_b),
+                                 (row["shapley_availability"], phi_e),
+                                 (row["total_topq_contrast"], c11-c00),
+                                 (row["capacity_share"], phi_b/(c11-c00))]:
+            if not close(actual, expected):
+                fail("CDC 2024 point-estimate identity failed")
+        rep = replicates.loc[(replicates.target == row["target"]) &
+                             np.isclose(replicates.nominal_fraction, row["nominal_fraction"])].copy()
+        if len(rep) != 500 or rep.replicate.nunique() != 500:
+            fail("CDC 2024 bootstrap group incomplete")
+        rep["capacity_share"] = rep.shapley_capacity / rep.total_topq_contrast
+        if not np.allclose(rep.shapley_capacity + rep.shapley_availability,
+                           rep.total_topq_contrast, atol=1e-12):
+            fail("CDC 2024 replicate accounting failed")
+        if not (rep.B_early.eq(row["B_early"]).all() and rep.B_all.eq(row["B_all"]).all()):
+            fail("CDC 2024 resample budgets changed")
+        for key in ["shapley_capacity", "shapley_availability", "interaction", "total_topq_contrast",
+                    "availability_at_early_budget", "ordered_availability_at_all_budget", "capacity_share"]:
+            low, high = np.quantile(rep[key], [0.025, 0.975])
+            if not close(row[key + "_lower"], low) or not close(row[key + "_upper"], high):
+                fail(f"CDC 2024 percentile mismatch: {key}")
+    if not np.allclose(cells.true_positive_n / cells.full_population_event_n,
+                       cells.population_event_capture, atol=1e-12):
+        fail("CDC 2024 cell event-denominator mismatch")
 
 
 def verify_feature_sensitivities() -> None:
@@ -363,7 +448,7 @@ def verify_feature_sensitivities() -> None:
 def verify_latex() -> None:
     text = (ROOT / "main.tex").read_text(encoding="utf-8")
     required = [
-        r"\usepackage[dblblindworkshop]{neurips_2026}",
+        r"\usepackage[dblblindworkshop,final]{neurips_2026}",
         r"\workshoptitle{TAE (Trust-AI-Eval): Can We Trust AI Evaluation?}",
         "Same Top Fraction, Different Workload",
         "Eligibility--capacity audit",
@@ -375,10 +460,19 @@ def verify_latex() -> None:
         r"\input{tables/table_score_transport.tex}",
         r"\input{tables/table_four_cells.tex}",
         r"\input{checklist}",
+        "Vache Oganisyan", "Dmitry Lvov", "Ilya Pershin",
+        "v.oganisian@innopolis.university", "d.lvov@innopolis.ru",
+        "i.pershin@innopolis.ru", "Research Center of the Artificial Intelligence Institute",
+        "139-10-2025-034", "000000C313925P4D0002",
+        r"\label{eq:utility}", r"\label{eq:synthetic_y}",
     ]
     for phrase in required:
         if phrase not in text:
             fail(f"Required manuscript phrase missing: {phrase}")
+
+    official_style_hash = "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a"
+    if hashlib.sha256((ROOT / "neurips_2026.sty").read_bytes()).hexdigest() != official_style_hash:
+        fail("NeurIPS 2026 style differs from the official unmodified distribution")
 
     banned = [
         "TODO",
@@ -431,31 +525,44 @@ def verify_latex() -> None:
         return
 
     pdf = PdfReader(str(ROOT / "main.pdf"))
-    if not (17 <= len(pdf.pages) <= 20):
-        fail(f"Unexpected packaged review PDF length: {len(pdf.pages)} pages")
     page_text = [page.extract_text() or "" for page in pdf.pages]
     reference_pages = [index for index, text_page in enumerate(page_text) if "References" in text_page]
     conclusion_pages = [index for index, text_page in enumerate(page_text) if "Conclusion" in text_page]
-    if not reference_pages or min(reference_pages) != 8:
-        fail("References must begin on page 9 after eight main-text pages")
-    if not conclusion_pages or min(conclusion_pages) != 7:
-        fail("Conclusion must appear on main-text page 8")
+    if not reference_pages or not (1 <= min(reference_pages) <= 8):
+        fail("Main text exceeds the workshop's eight-page limit")
+    if not conclusion_pages or min(conclusion_pages) >= min(reference_pages):
+        fail("Conclusion must appear before References")
+    for name in ["Vache Oganisyan", "Dmitry Lvov", "Ilya Pershin",
+                 "v.oganisian@innopolis.university", "d.lvov@innopolis.ru",
+                 "i.pershin@innopolis.ru", "TAE (Trust-AI-Eval)"]:
+        if name not in page_text[0]:
+            fail(f"Missing author, email, or workshop footer in final PDF: {name}")
+    if "Anonymous Authors" in page_text[0]:
+        fail("Final PDF still contains anonymous author block")
     if any("??" in text_page for text_page in page_text):
-        fail("Unresolved markers found in packaged review PDF")
+        fail("Unresolved markers found in packaged camera-ready PDF")
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--skip-hashes", action="store_true",
+                        help="After deliberate regeneration, check results without archived byte hashes")
+    args = parser.parse_args()
     checks = [
         verify_files,
         verify_hash_manifest,
         verify_shapley,
         verify_synthetic,
+        verify_synthetic_specification,
         verify_protocol_and_score_claims,
         verify_temporal_2024,
         verify_feature_sensitivities,
         verify_latex,
     ]
     for check in checks:
+        if args.skip_hashes and check is verify_hash_manifest:
+            print("SKIP verify_hash_manifest: regenerated working copy")
+            continue
         check()
         print(f"PASS {check.__name__}")
     print("PASS submission package")

@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\usepackage[dblblindworkshop]{neurips_2026}
+\usepackage[dblblindworkshop,final]{neurips_2026}
 \workshoptitle{TAE (Trust-AI-Eval): Can We Trust AI Evaluation?}
 
 \usepackage[utf8]{inputenc}
@@ -23,8 +23,8 @@
   citecolor=black,
   linkcolor=black,
   urlcolor=black,
-  pdfauthor={},
-  pdftitle={},
+  pdfauthor={Vache Oganisyan, Dmitry Lvov, Ilya Pershin},
+  pdftitle={Same Top Fraction, Different Workload: Auditing Eligibility and Capacity in Clinical Risk Evaluation},
   pdfsubject={},
   pdfkeywords={},
   pdfcreator={},
@@ -43,7 +43,15 @@
 \title{Same Top Fraction, Different Workload:\\
 Auditing Eligibility and Capacity in Clinical Risk Evaluation}
 
-\author{Anonymous Authors}
+\author{%
+  Vache Oganisyan$^{1}$ \qquad Dmitry Lvov$^{1,2}$ \qquad Ilya Pershin$^{1,3}$ \\
+  $^{1}$Research Center of the Artificial Intelligence Institute, \\
+  Innopolis University, Innopolis, Russia \\
+  $^{2}$ITMO University, St. Petersburg, Russia \\
+  $^{3}$Kazan Federal University, Kazan, Russia \\
+  {\small\texttt{v.oganisian@innopolis.university}\quad
+  \texttt{d.lvov@innopolis.ru}\quad\texttt{i.pershin@innopolis.ru}}
+}
 
 \begin{document}
 
@@ -68,6 +76,8 @@ half the cohort-relative estimate. In 22\% of controlled conditions, the
 cohort-relative comparison improves while fixed-budget capture declines. The
 audit therefore distinguishes population reach from resource expansion and
 makes the policy represented by a top-fraction metric explicit.
+Code and reproduction materials will be publicly released at
+\url{https://github.com/vache4ogan/prenatal-risk-scoreability}.
 \end{abstract}
 
 \section{Introduction}
@@ -102,21 +112,16 @@ reachable cases regardless of discrimination. National vital statistics retain b
 excluded outcomes, making it possible to distinguish retrieval within the gate
 from reach across the complete target population.
 
-We audit this distinction on CDC Natality preterm birth, neonatal intensive
-care unit (NICU) admission, and low birth weight. Figure~\ref{fig:headline}
-previews the result. At the nominal top 10\% operating point, all-record
-upper-bound evaluation selects roughly 88,000 additional records per outcome. Population
-event capture rises substantially, but about 62\% of the joint increase is
-allocated to the larger workload. A controlled mechanism grid then identifies
-conditions in which the resource change is large enough to reverse the
-fixed-budget conclusion.
+We audit preterm birth, neonatal intensive care unit (NICU) admission, and low
+birth weight in CDC Natality. Figure~\ref{fig:headline} previews how the
+workload change alters the interpretation of the reported gain.
 
 Our contributions are:
 \begin{enumerate}
-  \item \textbf{An auditable decision estimand.} Population event capture keeps
-  every target-population event in the denominator, while a complete
-  eligibility-by-budget design exposes the two fixed-budget contrasts and their
-  interaction.
+  \item \textbf{An auditable decision estimand.} A shared score vector and
+  population event denominator connect a same-fraction claim to four explicit
+  policies. The two fixed-budget contrasts reveal which part survives equal
+  workload; their interaction measures dependence on the chosen budget.
   \item \textbf{A national-scale measurement study.} Frozen 2022 scoring
   pipelines applied to CDC 2023 show that the same top 10\% expands workload by
   33.8\% and that capacity receives 61.6--62.2\% of the symmetric allocation
@@ -125,10 +130,6 @@ Our contributions are:
   test locates sign-reversal regimes, and the resulting checklist makes the
   candidate gate, absolute workload, and event denominator explicit.
 \end{enumerate}
-
-Code for the four-cell audit and synthetic experiments, together with the
-aggregate artifacts used to generate the reported figures and tables, will be
-released upon publication.
 
 \begin{figure}[t]
   \centering
@@ -151,12 +152,14 @@ released upon publication.
 Prenatal case-management, imaging worklists, and clinical workflow studies
 connect risk scores to finite review or treatment capacity
 \citep{pan2017prenatal,annarumma2019triage,baltruschat2021worklist,jung2021framework,singh2023resource}.
-They motivate operating points such as top 5\%, top 10\%, or a fixed number of
-patients and show why use-aligned metrics matter. Calibrated subset selection
-similarly constructs shortlists with guarantees inside a supplied candidate
-pool \citep{wang2022screening}. These approaches make selection within a
-declared pool more reliable, while leaving cross-pool comparisons dependent on
-how the shortlist size changes with the pool.
+These studies connect operating points to the capacity and value of a clinical
+workflow. Resource-constrained net benefit evaluates whether the expected value
+of acting on a score justifies its workload \citep{singh2023resource}.
+Calibrated subset selection constructs shortlists containing a desired number
+of qualified candidates in expectation \citep{wang2022screening}. These
+objectives govern selection within a specified population and resource model.
+Interpreting a reported gain across candidate pools additionally requires
+tracking the absolute budget induced by each pool's size.
 
 \paragraph{Selective access to clinical data and services.}
 Clinical records reflect who enters care, is tested, and receives a documented
@@ -175,11 +178,12 @@ Clinical reporting guidance requires explicit target populations, intended
 use, discrimination, and calibration \citep{collins2024tripod}. Symmetric
 allocation across factor orderings is established decomposition machinery
 \citep{kitagawa1955components,shapley1953value,shorrocks2013decomposition}.
-Taken together, these conventions still leave the operational meaning of a metric
-implicit when candidate membership and absolute capacity change together. The
-case is common and concrete: a percentage-based budget is held numerically
-constant across cohorts, its absolute size moves, and the resulting gain is
-reported as if it represented one intervention.
+The decomposition rule specifies how a joint difference is allocated once the
+comparison cells have been defined. Cross-cohort top-fraction evaluation still
+requires a choice of those cells: whose outcomes form the denominator, which
+records can enter the ranking, and how many positions each policy funds.
+Without these choices, a constant percentage can conceal a changing workload
+and leave the fixed-capacity conclusion unresolved.
 
 \FloatBarrier
 
@@ -273,9 +277,10 @@ diabetes, and pre-pregnancy hypertension. Outcome, delivery, and neonatal
 fields are excluded. Numeric variables use development-set median imputation
 and standardization; race uses most-frequent imputation and one-hot encoding.
 One LightGBM model per outcome uses 350 trees, learning rate 0.05, 31 leaves,
-minimum child size 100, and seed 2026 \citep{ke2017lightgbm}. The audit compares
-candidate and budget policies on a shared score vector while holding the model
-family constant.
+minimum child size 100, L2 penalty 1, and seed 2026 \citep{ke2017lightgbm}. The audit compares
+candidate and budget policies on a shared score vector. A camera-ready
+replication applies the same frozen 2022 pipelines to CDC 2024, with identical
+cohort rules, four cells, and 500 paired resamples per outcome.
 
 \subsection{Decision metrics}
 
@@ -334,6 +339,11 @@ the capacity component is non-negative; expanding $S$ at fixed $b$ can have
 either sign. A uniformly random ranking supplies the mechanical reference
 $\operatorname{E}[\capture(S,b)]=(b/|S|)(E_S/E)$.
 
+The contribution is the comparison design: off-diagonal cells test
+equal-workload claims against a denominator retaining events outside the gate.
+The established Shapley rule summarizes these event-count changes; clinical
+effects require a separate intervention model.
+
 \subsection{Evaluation and mechanism stress test}
 
 The empirical audit uses $q\in\{0.05,0.10\}$. Point estimates are accompanied
@@ -342,13 +352,18 @@ uses common record multiplicities across all four cells while holding the
 observed scores and absolute budgets fixed. The resulting central 95\% ranges
 measure conditional stability of the reported four-cell contrasts.
 
-The controlled simulation crosses availability fractions 0.5, 0.7, and 0.9;
-risk--availability relationships in which higher risk is less available,
-independent, or more available; score noise levels 0.5, 1, and 2; and
-$q\in\{0.05,0.10,0.20\}$. These factors yield 81 conditions. Each of 100
-repetitions contains 100,000 evaluation records and an independent 50,000-record
-threshold-selection population. Outcomes, availability, and scores are shared
-across the compared policies within a repetition.
+The simulation draws latent risk $Z\sim\mathcal N(0,1)$, outcomes with
+$P(Y=1\mid Z)=\operatorname{logit}^{-1}(\alpha_Y+Z)$, eligibility with
+$P(A=1\mid Z)=\operatorname{logit}^{-1}(\alpha_A+\gamma Z)$, and scores
+$R=Z+\sigma\epsilon$, where $\epsilon\sim\mathcal N(0,1)$ is independent.
+Conditional on $Z$, outcome and eligibility draws are independent. Intercepts
+set marginal event prevalence to 0.10 and availability to $a$. Crossing
+$a\in\{0.5,0.7,0.9\}$, $\gamma\in\{-1,0,1\}$,
+$\sigma\in\{0.5,1,2\}$, and $q\in\{0.05,0.10,0.20\}$ gives 81 conditions.
+Each of 100 independent repetitions contains 100,000 evaluation records and
+50,000 independent threshold-selection records, with shared random draws
+across conditions. Appendix~\ref{app:synthetic} specifies all parameters,
+coupling, and generation steps.
 
 \section{Results}
 \label{sec:results}
@@ -361,11 +376,6 @@ of preterm events, 70.6\% of NICU events, and 69.4\% of low-birth-weight events.
 Before ranking begins, the early gate therefore leaves 28.2--30.6\% of events
 outside its reachable population. Including every documented prenatal-care
 start in months 1--10 raises the event ceiling to 91.1--92.1\%.
-
-In absolute terms, early eligibility excludes 74,624--89,111 outcome events
-across the three tasks. Even the documented-start gate leaves 20,558--27,087
-events outside the candidate population. These are reach constraints: changing
-the ranking leaves events outside its decision set unreachable.
 
 The excluded records carry concentrated risk. Outcome prevalence among no-care
 records is 2.4--2.7 times the early-entry prevalence across the three targets;
@@ -385,10 +395,11 @@ from 14.63\% to 20.30\% for preterm birth, 13.93\% to 19.52\% for NICU, and
 38.8\%, 40.1\%, and 42.2\%, respectively.
 
 The proportional policy adds 87,931--88,023 service slots per outcome and
-captures 16,505--17,177 additional events. Its marginal yield is therefore
-18.8--19.5 additional events per 100 added slots, equivalent to 5.1--5.3
-additional selections per extra captured event. Thus, the higher capture is
-obtained under an explicitly 33.8\% larger service capacity.
+captures 16,505--17,177 additional events. The yield of this combined policy
+change is 18.8--19.5 additional events per 100 added slots, equivalent to
+5.1--5.3 additional selections per extra captured event. This ratio includes
+both expanded eligibility and the 33.8\% larger capacity. Capacity-only yields
+compare columns within a fixed row of the four-cell design.
 
 \input{tables/table1_shapley_q10.tex}
 
@@ -422,18 +433,15 @@ is 1.42--1.49 times larger and capture increases by 6.36--8.19 points.
 
 \input{tables/table_policy_contrasts_q10.tex}
 
-These contrasts differ because they implement different resource commitments
-on a shared ranking. A complete cross-cohort claim therefore states its
-candidate rule, selected count, and event denominator alongside the gain.
-
-The cross-year workload check points in the same direction. Transporting the
-stored CDC 2022 top-10\% score cutoffs to target-specific CDC 2024 cohorts
-selected 10.65\% of preterm records, 9.50\% of NICU records, and 8.30\% of
-low-birth-weight records. Relative to a 10\% service budget, these rates create
-22,668 additional preterm slots but leave 17,621 NICU and 59,716
-low-birth-weight slots unfilled. A fixed score cutoff therefore defines a
-workload that can move across years; the exact selected count remains the
-operational quantity for capacity planning.
+Transporting the full-precision 2022 cutoffs to CDC 2024 selects 10.60\% of
+preterm, 10.64\% of NICU, and 10.20\% of low-birth-weight records: 21,112,
+22,400, and 6,952 more slots than a 10\% budget. The complete 2024 four-cell
+replication assigns 60.9--62.8\% of the top-10\% joint gain to capacity, with
+conditional 95\% ranges spanning 59.8--63.9\% across outcomes
+(Appendix~\ref{app:shapley}). Both fixed-budget eligibility contrasts remain
+positive for every outcome and $q$. This replication uses the original numeric race encoding and
+supersedes the reviewed 2024 threshold-only calculation, whose string
+encoding silently mapped race categories to unknown values.
 
 \subsection{Controlled mechanism stress test}
 
@@ -459,22 +467,19 @@ newly admitted pool is lower risk and can displace selected events.
 At 70\% availability, medium score quality, and $q=10\%$, for example,
 cohort-relative capture increases 5.52 points while fixed-budget candidate
 expansion changes capture by $-0.28$ points; 93 of 100 repetitions reverse.
-The largest mean absolute interaction is 9.49 points. In CDC 2023, all six
-fixed-budget eligibility contrasts remain positive, so the ambiguity changes
-effect magnitude. The controlled grid shows that selective availability can
-also change effect direction.
+The largest mean absolute interaction is 9.49 points. In CDC 2023, both
+fixed-budget eligibility contrasts remain positive for every outcome and $q$,
+so the ambiguity changes effect magnitude. The controlled grid shows that
+selective availability can also change effect direction.
 
 \subsection{Temporal score diagnostics}
 
-The four-cell accounting fixes one CDC 2023 score vector, isolating its
-within-year policy contrasts from score drift. A temporal check additionally
-shows that the frozen 2022 pipelines retain similar aggregate discrimination in
-CDC 2023 and provide a transported ranking for the policy audit.
-Across outcomes, ROC-AUC changes by at most 0.003 and average precision by at
-most 0.003 from the CDC 2022 validation split to CDC 2023. CDC 2023 Brier skill
-relative to a prevalence-only forecast is 1.7--2.4\%. These diagnostics anchor
-the empirical audit in transported scores while preserving the decision policy
-as the primary estimand.
+The frozen 2022 pipelines retain similar discrimination in CDC 2023
+(Table~\ref{tab:score_transport}). Across outcomes, ROC-AUC and average
+precision change by at most 0.003 from 2022 validation to 2023. Brier skill
+relative to a prevalence-only forecast is 1.7--2.4\%. The four-cell audit fixes
+each transported score vector, isolating within-year policy contrasts from
+temporal score drift.
 
 \input{tables/table_score_transport.tex}
 
@@ -496,38 +501,36 @@ two alternative conservative landmark specifications.
 \label{sec:discussion}
 
 \paragraph{Resource interpretation of top-$q$ evaluation.}
-Top-$q$ evaluation is operationally coherent when service volume scales with
-the candidate population; a fixed absolute budget answers the constrained
-capacity question. The distinction is material here: the headline
-38.8--42.2\% relative capture gain includes a 33.8\% workload increase. The
-four-cell design makes that resource policy visible and supplies both
-fixed-budget contrasts.
+Top-$q$ evaluation is coherent when service volume scales with the candidate
+population; a fixed budget answers the constrained-capacity question. Here,
+a 38.8--42.2\% capture gain includes 33.8\% more workload. Making this policy
+visible helps prevent unplanned demand from redirecting scarce services.
 
-\paragraph{Separating reach, ranking, and capacity.}
-The candidate gate determines the event ceiling, ranking determines which
-eligible cases approach the cutoff, and capacity determines how many positions
-can be filled. Freezing the score vector isolates broader reach at fixed
-capacity from proportional resource expansion; the interaction records when
-the value of one lever depends on the other. Transported score cutoffs form a
-third regime in which workload emerges from the subsequent score distribution,
-as the CDC 2024 check illustrates.
+\paragraph{From audit to policy choice.}
+For a fixed service budget $B$, compare feasible policies at the same selected
+count and maximize captured events when case values and selection costs are
+equal. With flexible capacity, an explicit screening utility connects the
+audit to resource-constrained decision analysis \citep{singh2023resource}:
+\begin{equation}
+ U(S,b)=v\,\operatorname{TP}(S,b)-c\,b-K(S),
+ \label{eq:utility}
+\end{equation}
+where $v>0$ values a captured event, $c$ costs one selection, and $K(S)$ is the
+cost of making the candidate pool reachable. Prefer a feasible policy change
+when $v\,\Delta\operatorname{TP}>c\,\Delta b+\Delta K$. For the joint CDC
+change and $\Delta K=0$, the break-even cost-to-value ratio is 0.188--0.195.
+These retrospective retrieval values require intervention benefits and harms
+to translate into prospective clinical utility.
 
 \paragraph{Applicability across deterministic score vectors.}
-The four-cell accounting accepts any fixed deterministic score vector, and capacity monotonicity
-follows from the nesting of top-$b$ selections independently of the LightGBM
-functional form. Candidate expansion at fixed $b$ depends on which scores and
-events enter the pool, so its sign remains empirical. The random-ranking
-reference and the controlled grid spanning three score-noise levels recover
-both properties: capacity usually explains most of a proportional-budget
-contrast, while selective availability can reverse the fixed-budget effect.
-Model choice changes where a study lies in this mechanism map; the audit
-defines the decision comparison around it.
+Nested top-$b$ selections imply capacity monotonicity for any fixed ranking.
+The numerical allocation depends on case mix, ranking quality, eligibility,
+and budget: 61.6--62.2\% characterizes these three CDC 2023 tasks and LightGBM
+scores. Feature ablations test specification sensitivity; the controlled grid
+shows how availability mechanisms can reverse fixed-budget contrasts.
 
 \paragraph{A recommended reporting profile.}
-Based on the empirical and controlled audits, Table~\ref{tab:reporting_profile}
-proposes a minimum reporting checklist for cross-cohort top-$q$ comparisons.
-The checklist links each reported number to the target population, candidate
-gate, resource rule, or decomposition needed to interpret the operating point.
+Table~\ref{tab:reporting_profile} specifies the minimum reporting items.
 
 \begin{table}[!htbp]
   \centering
@@ -548,34 +551,36 @@ gate, resource rule, or decomposition needed to interpret the operating point.
   \end{tabular*}
 \end{table}
 
-The profile applies wherever a score becomes a finite worklist: imaging queues,
-screening, case management, and public-sector allocation all require a declared
-fixed, proportional, or threshold-driven capacity rule. Exact selected counts
-prevent a stable percentage from disguising a changing workload.
-
 \paragraph{Implementation in existing evaluation pipelines.}
-Stored identifiers, outcomes, candidate masks, and one score vector are enough
-to construct the four cells. Implementations record both budgets, selected
-events, and the full-population denominator, then reuse common record weights
-for paired resampling. Aggregate counts and configurations provide an auditable
-path from a top-$q$ result to its service policy without releasing row-level
-clinical data.
+Stored scores, outcomes, and candidate masks construct the cells; common
+resampling weights preserve pairing without releasing individual records.
+
+\paragraph{Scope and next validation.}
+Birth-certificate records provide retrospective outcomes and a care-entry
+eligibility proxy. Prospective EHR landmarks would establish when each input
+and intervention becomes available. The CDC 2024 replication supports temporal
+stability within this source; additional model families and independent
+clinical settings would test broader transport. Policy evaluation with heterogeneous benefits,
+acquisition costs, or subgroup priorities can use the same four-cell counts
+under an explicitly chosen utility.
 
 \FloatBarrier
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-Top-fraction comparisons across cohorts encode service decisions in addition
-to ranking summaries. In the CDC audit, the same nominal top 10\% expands the
-workload by one third, and symmetric accounting assigns about 62\% of the
-capture gain to that capacity increase. Controlled experiments identify
-conditions in which cohort-relative and fixed-budget conclusions have opposite
-signs. Reporting the target population, candidate rule, exact selected count,
-full-population event denominator, and fixed-budget contrast makes the policy
-claim auditable. The present scope is a birth-certificate score and a
-care-entry eligibility proxy; prospective EHR landmarks, subgroup budgets, and
-additional temporal cohorts provide the next transport tests.
+Top-fraction comparisons encode service decisions as well as ranking quality.
+In CDC 2023, the same top 10\% expands workload by one third, with about 62\%
+of the capture gain allocated to capacity; the CDC 2024 replication preserves
+this pattern. Controlled experiments also identify opposite-sign conclusions.
+Reporting the population, candidate rule, selected count, event denominator,
+and fixed-budget contrast makes these policy claims auditable.
+
+\begin{ack}
+The study was supported by the Ministry of Economic Development of the
+Russian Federation (agreement No. 139-10-2025-034 dd. 19.06.2025,
+IGK 000000C313925P4D0002).
+\end{ack}
 
 \clearpage
 
@@ -631,18 +636,89 @@ The point-estimate budgets at $q=5\%$ are 130,053/174,019 for preterm,
 260,009/348,032. These observed integer budgets remain fixed across empirical
 resamples.
 
+\input{tables/table_temporal_2024.tex}
+
+The camera-ready replication uses 3,512,780 preterm records (307,612 events),
+3,510,341 NICU records (310,650 events), and 3,514,422 low-birth-weight records
+(245,967 events) from CDC 2024. Models, preprocessing, and thresholds remain
+frozen from 2022. The corrected numeric MRACE31 representation matches model
+fitting; replay on CDC 2023 reproduces all 24 original four-cell point
+estimates exactly. Both full-precision and six-decimal threshold results,
+all 24 replication cells, and 3,000 paired-resample rows are archived.
+
 \section{Synthetic Grid Details}
 \label{app:synthetic}
 
-The synthetic experiment crosses three availability fractions, three
-risk--availability slopes, three score-noise levels, and three selection
-fractions. Intercepts are solved numerically so the target marginal prevalence
-or availability fraction holds before Monte Carlo variation. Common random
-numbers are used across all 81 conditions within each repetition, and the
-available-subset and all-population policies share outcomes and score vectors.
-Reported 2.5th and 97.5th percentiles describe the replicate distribution.
+\paragraph{Data-generating process.}
+Let $g(x)=(1+e^{-x})^{-1}$. For each evaluation record draw mutually independent
+$Z_i,\epsilon_i\sim\mathcal N(0,1)$ and
+$U_i^Y,U_i^A\sim\operatorname{Uniform}(0,1)$. Define
+\begin{align}
+ Y_i&=\mathbf 1\{U_i^Y<g(\alpha_Y+Z_i)\}, &
+ R_i&=Z_i+\sigma\epsilon_i,\label{eq:synthetic_y}\\
+ A_i&=\mathbf 1\{U_i^A<g(\alpha_A(a,\gamma)+\gamma Z_i)\}.&&
+ \label{eq:synthetic_a}
+\end{align}
+The full population contains all records and the available set is
+$\{i:A_i=1\}$. The intercepts solve
+$\mathbb E[g(\alpha_Y+Z)]=0.10$ and
+$\mathbb E[g(\alpha_A+\gamma Z)]=a$ for $Z\sim\mathcal N(0,1)$.
+The outcome-risk coefficient is 1.0; $\alpha_Y=-2.5642215001$.
+Availability slopes $\gamma=-1,0,1$ encode higher risk being less available,
+independent of availability, or more available, respectively.
 
-The score-noise levels $\sigma_R=0.5,1,2$ imply expected correlations between
+\begin{table}[htbp]
+  \centering
+  \caption{Availability intercepts used in every synthetic condition.
+  Both nonzero slopes have the same intercept by normal symmetry.}
+  \label{tab:synthetic_intercepts}
+  \small
+  \begin{tabular}{lrr}
+    \toprule
+    Target availability $a$ & $\gamma=0$ & $\gamma=\pm1$ \\
+    \midrule
+    0.5 & 0.0000000000 & 0.0000000000 \\
+    0.7 & 0.8472978604 & 1.0184006520 \\
+    0.9 & 2.1972245773 & 2.5642215001 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The implementation uses 80-node Gauss--Hermite quadrature and bisection on
+$[-40,40]$ with marginal-probability tolerance $10^{-13}$ and at most 200
+iterations. Table~\ref{tab:synthetic_intercepts} displays rounded values;
+the code solves them at runtime. The grid crosses
+$a\in\{0.5,0.7,0.9\}$, $\gamma\in\{-1,0,1\}$,
+$\sigma\in\{0.5,1,2\}$, and $q\in\{0.05,0.10,0.20\}$.
+
+\paragraph{Repetitions and shared random draws.}
+NumPy \texttt{SeedSequence(2028).spawn(100)} supplies independent repetition
+seeds to \texttt{default\_rng}. Each repetition draws, in order, 100,000
+evaluation risks, outcome uniforms, availability uniforms, and standard-normal
+score errors, followed by 50,000 independent threshold-selection risks and
+errors. The same base draws are reused across the entire grid: changing
+$\gamma$ or $a$ changes the availability rule, changing $\sigma$ rescales the
+score error, and changing $q$ changes the budget. Outcomes, scores, and masks
+remain shared between the four cells within a condition. Conditions are
+therefore paired within each repetition.
+
+\paragraph{Selection and reported uncertainty.}
+Budgets use Python's \texttt{round} of $q$ times the relevant pool size.
+Descending score order breaks exact ties by ascending original row position.
+For the transported-threshold policy, the independent threshold sample uses
+$R^{\mathrm{cal}}=Z^{\mathrm{cal}}+\sigma\epsilon^{\mathrm{cal}}$; its
+$\operatorname{round}(q\,50{,}000)$-th highest score is applied with $\geq$.
+Every policy uses the same realized full-population event denominator within a
+repetition. Condition means and 2.5th/97.5th percentiles summarize 100
+repetitions. These percentiles describe variation across generated populations,
+rather than a confidence interval for the Monte Carlo mean.
+The 18 sign reversals compare condition means; the nine negative ranges refer
+specifically to the all-record-budget eligibility contrast $C_{11}-C_{01}$.
+The 81 grid settings carry equal weight in the reported 22\% reversal fraction,
+which describes this stress-test design rather than a prevalence of failure
+in clinical deployments.
+
+The score-noise levels $\sigma=0.5,1,2$ imply expected correlations between
 score and latent risk of approximately 0.894, 0.707, and 0.447. The largest
 absolute replicate-level interaction is 10.72 percentage points. Full
 condition summaries and replicate outputs are retained in the prepared release
@@ -668,8 +744,9 @@ resamples per target and budget, exact accounting identities, all 81 synthetic
 conditions, 18 mean sign reversals, and 9 conditions whose central replicate
 range is negative. The prepared release bundle contains aggregate inputs,
 figure and table generators, verification scripts, the locked synthetic
-configuration and runner, synthetic replicate outputs, and the temporal
-threshold-transport script. It redistributes no individual-level Natality
+configuration and runner, synthetic replicate outputs, and the corrected
+CDC 2024 replication aggregates. Local fitting and temporal-audit entrypoints
+are provided in the repository. The package redistributes no individual-level Natality
 records. Use of the public-use files follows the NCHS Data User Agreement
 \citep{cdcDataAgreement}; LightGBM is distributed under the MIT License
 \citep{lightgbmRepo}.
