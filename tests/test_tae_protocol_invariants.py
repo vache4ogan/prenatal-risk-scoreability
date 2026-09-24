@@ -39,6 +39,10 @@ def make_data(n: int = 5000, seed: int = 42):
     return y, score, care
 
 
+def test_protocol_invariants():
+    assert main() == 0
+
+
 def main() -> int:
     tae.validate_config(tae.DEFAULT_CONFIG)
     y, score, care = make_data()

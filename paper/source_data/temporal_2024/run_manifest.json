@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "year": 2024,
+  "input_sha256": "65d04e37c416e09a3004a4dae159e600de0a20d2fb873661ba63f12a2163cd92",
+  "script_sha256": "7f2a789347e71416359b7c2a1e40b47863a3696e2c329d5811b26064ac384bba",
+  "audit_module_sha256": "fd5ee0acb4ce87e578cf8ce2719bd91042291da70f62744db277ea9d5b3940bd",
+  "bootstrap_replicates": 500,
+  "seed": 2027,
+  "target_seed_stride": 1000,
+  "fractions": [
+    0.05,
+    0.1
+  ],
+  "model_fitting": false,
+  "category_encoding": "numeric MRACE31, canonical representation",
+  "python": "3.12.10",
+  "models": {
+    "target_preterm": "f3beafc35acad569f2362110289b1b3387b84c0256f0452f4fc6387443fccfb7",
+    "target_nicu": "4e06e0eb4e50a347257a5b64b0819b34b0e64be65cd219d00e8597e4bd207292",
+    "target_lbw": "223eaa5c6a4e6bfb9452542743a880c3414dc98a5b41507f465f448e3d144c73"
+  },
+  "versions": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "lightgbm": "4.7.0",
+    "joblib": "1.5.3"
+  },
+  "elapsed_seconds": 1030.248638868332,
+  "hashes": {
+    "bootstrap_replicates.csv": "1bf604b4d4d36f33a3bc867fa4a340ce6a80e2d0bae59dac789d615c6875d1f9",
+    "decomposition.csv": "6657ad28a71cb508367a46ec1168404b4a9ab3661e329d42f35dfe1c2174cccb",
+    "four_cells.csv": "dea839bd25e07d9a7d896b5bedb1b2bf88043785389fb6f0b6766278cdcaf925",
+    "summary.csv": "2ccdd180cfe5e59a7efd57702b0e2994ca53a783d49895775ec1c249835cd853",
+    "threshold_transport.csv": "a80c78c9dc0178a89670b79e8c702c7b211208bf12cfa1a8933e67ee31b188ea"
+  }
+}

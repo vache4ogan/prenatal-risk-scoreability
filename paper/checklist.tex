@@ -67,7 +67,7 @@
 \item {\bf Open access to data and code}
     \item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
     \item[] Answer: \answerNo{}
-    \item[] Justification: The underlying CDC Natality files and official layouts are openly accessible, and the complete code and aggregate-artifact release is prepared. The double-blind submission provides no public repository; the release will accompany publication. This affects immediate artifact access rather than the protocol disclosure covered above.
+    \item[] Justification: CDC Natality public-use files and official layouts are openly accessible. Code, aggregate artifacts, configurations, and reproduction instructions will be publicly released with the camera-ready version at \url{https://github.com/vache4ogan/prenatal-risk-scoreability}. The source package already contains the manuscript generators, synthetic experiment, and verification scripts. Repository access is pending the owner's visibility change.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that paper does not include experiments requiring code.
@@ -95,7 +95,7 @@
 \item {\bf Experiment statistical significance}
     \item[] Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Section~3.4 defines 500 paired full-size record-level resamples with frozen scores and observed budgets. Appendix~B reports the 2.5th and 97.5th percentile ranges, while Figure~3 reports repetition frequencies for the controlled experiment. These quantities describe conditional sampling stability rather than retraining uncertainty.
+    \item[] Justification: Section~3.4 defines 500 paired full-size record-level resamples with frozen scores and observed budgets. Appendix~B reports their percentile ranges. Appendix~C defines the synthetic central 95\% replicate ranges, which measure variation across generated populations rather than uncertainty in their Monte Carlo mean. Figure~3 reports reversal frequencies. Neither experiment's ranges include model-retraining uncertainty.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.

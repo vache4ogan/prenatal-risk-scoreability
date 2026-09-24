@@ -2,6 +2,8 @@
 data/
 venv/
 .venv/
+.venv-*/
+*.egg-info/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -17,6 +19,9 @@ artifacts/
 repo_migration/
 paper_old/
 paper/build/
+tmp/
+TAE_2026_camera_ready.zip
+CAMERA_READY_CHANGES.md
 paper/.matplotlib/
 *.aux
 *.bbl

@@ -20,3 +20,6 @@ paper/source_data/sensitivity_no_priorterm.csv text eol=crlf
 paper/source_data/sensitivity_no_race.csv text eol=crlf
 paper/source_data/shapley_bootstrap_replicates.csv text eol=crlf
 paper/tables/*.tex text eol=crlf
+
+# Preserve the corrected replication's byte-hashed run artifacts verbatim.
+paper/source_data/temporal_2024/* -text

@@ -58,7 +58,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
-    frame = build_targets(pd.read_csv(args.data, dtype=str))
+    frame = build_targets(pd.read_csv(args.data, low_memory=False))
     frame["is_us_resident"] = pd.to_numeric(frame["is_us_resident"], errors="coerce")
     frame["is_singleton"] = pd.to_numeric(frame["is_singleton"], errors="coerce")
     cutoffs = load_cutoffs(args.canonical_results)
@@ -75,12 +75,10 @@ def main() -> None:
             & frame[target].notna()
         ].copy()
         for feature in features:
-            if feature != "mother_race":
-                evaluation[feature] = pd.to_numeric(
-                    evaluation[feature], errors="coerce"
-                )
+            # The frozen one-hot encoder was fitted on numeric MRACE31 codes.
+            evaluation[feature] = pd.to_numeric(evaluation[feature], errors="raise")
 
-        transformed = bundle["preprocessor"].transform(evaluation[features])
+        transformed = bundle["preprocessor"].transform(evaluation[features]).astype(np.float32)
         scores = bundle["model"].predict_proba(transformed)[:, 1]
         canonical_threshold, threshold_used = cutoffs[target]
         selected = scores >= threshold_used
