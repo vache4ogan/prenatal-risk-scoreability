@@ -1,0 +1,261 @@
+{
+  "bootstrap_rows": 84,
+  "clearml_dataset_id": "062ba26c0ca24cef99549c2a2ab34e65",
+  "clearml_dataset_root": "/clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65",
+  "clearml_project_id": "d93b86c2d6df46e9a99b4c8157e16f13",
+  "clearml_reporting_layout": "compact-v2",
+  "clearml_task_id": "1544970493fa4bde9011bb94f6aef28f",
+  "code": {
+    "path": "/root/.clearml/venvs-builds/3.12/code/run_factorial_all_births_sensitivity_clearml.py",
+    "sha256": "263f16714b872c1062cdaa0b872f111ccf0cce852444bbc91b8546f10619196a"
+  },
+  "convergence_warnings": [
+    {
+      "cohort": "early_entry",
+      "feature_set": "booking_strict",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_preterm"
+    },
+    {
+      "cohort": "full_cohort",
+      "feature_set": "booking_strict",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_preterm"
+    },
+    {
+      "cohort": "early_entry",
+      "feature_set": "pregnancy_oracle",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_preterm"
+    },
+    {
+      "cohort": "full_cohort",
+      "feature_set": "pregnancy_oracle",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_preterm"
+    },
+    {
+      "cohort": "early_entry",
+      "feature_set": "booking_strict",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_nicu"
+    },
+    {
+      "cohort": "early_entry",
+      "feature_set": "pregnancy_oracle",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_nicu"
+    },
+    {
+      "cohort": "early_entry",
+      "feature_set": "booking_strict",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_lbw"
+    },
+    {
+      "cohort": "full_cohort",
+      "feature_set": "booking_strict",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_lbw"
+    },
+    {
+      "cohort": "early_entry",
+      "feature_set": "pregnancy_oracle",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_lbw"
+    },
+    {
+      "cohort": "full_cohort",
+      "feature_set": "pregnancy_oracle",
+      "messages": [
+        "The max_iter was reached which means the coef_ did not converge"
+      ],
+      "model": "logistic_regression",
+      "target": "target_lbw"
+    }
+  ],
+  "design": {
+    "analysis_type": "all_births_sensitivity",
+    "capacities": [
+      0.05,
+      0.1
+    ],
+    "cdc2023_used_for_selection": false,
+    "class_weighting": false,
+    "cohorts": [
+      "early_entry",
+      "full_cohort"
+    ],
+    "dependence_caveat": "Multiple infants from one pregnancy may be dependent; record-level bootstrap does not cluster by pregnancy.",
+    "feature_sets": {
+      "booking_strict": [
+        "diab_pre",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ],
+      "pregnancy_oracle": [
+        "diab_gest",
+        "diab_pre",
+        "eclampsia",
+        "hyper_gest",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ]
+    },
+    "hyperparameter_optimization": false,
+    "logistic_regression_max_iter": 2000,
+    "models": [
+      "logistic_regression",
+      "lightgbm"
+    ],
+    "multiples_included": true,
+    "oversampling": false,
+    "primary_population": "is_us_resident == 1",
+    "singleton_filter_applied": false,
+    "targets": [
+      "target_preterm",
+      "target_nicu",
+      "target_lbw"
+    ]
+  },
+  "elapsed_seconds": 33756.706,
+  "factorial_rows": 96,
+  "inputs": {
+    "2022": {
+      "path": "/clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_temporal_harmonized/cdc_natality_2022_harmonized.csv",
+      "rows": 3676029,
+      "sha256": "c5f1ab62b0e9ac63795e75f6075d2523a3f4c5dc3e95c7aa1f7df6763205a59c"
+    },
+    "2023": {
+      "path": "/clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_temporal_harmonized/cdc_natality_2023_harmonized.csv",
+      "rows": 3605081,
+      "sha256": "82b38b24d2f795a4a5233ce3a2fcb43b70789339306ba9044bde56f50bb270a8"
+    }
+  },
+  "outputs": {
+    "bootstrap_comparisons.csv": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/bootstrap_comparisons.csv",
+      "sha256": "dda11b432d67d502d6be2c1ff3c596875b55b173cc4964777aedba2b8dfed211",
+      "size_bytes": 18460
+    },
+    "care_entry_capture.csv": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/care_entry_capture.csv",
+      "sha256": "5aa417e48b085fd64461470601565b0d9990817485c351c24e8892feb8557473",
+      "size_bytes": 9800
+    },
+    "cohort_flow_all_births.csv": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/cohort_flow_all_births.csv",
+      "sha256": "7baf251da0572d9921d517e9cde20632130ea03203c1c1c82a85657116b9236c",
+      "size_bytes": 3802
+    },
+    "commands.txt": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/commands.txt",
+      "sha256": "b9f86ba6d92769ef9e4958a0b3eda608f8c21f6acfb9a7d9492f7a6e7ddd4d68",
+      "size_bytes": 312
+    },
+    "experiment_config.locked.yaml": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/experiment_config.locked.yaml",
+      "sha256": "7b1abbc00fcb7b588ab638ee7f3ffb5b8b289632c606a06cf881062264e7fcaa",
+      "size_bytes": 2755
+    },
+    "factorial_results.csv": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/factorial_results.csv",
+      "sha256": "cd381e1c9e39dc66cdabf78755604c184d7e59c1e10036d2b597c9e574c2a6a3",
+      "size_bytes": 38659
+    },
+    "hypothesis_verdict.md": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/hypothesis_verdict.md",
+      "sha256": "70a681c176c85928e2e9a64b5f648280c0149656b7aef01c0088a5fc3c4f2656",
+      "size_bytes": 5744
+    },
+    "package_versions.txt": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/package_versions.txt",
+      "sha256": "ecdff21a46aa10791c9d458c8a5b87295c15091723e67233cd4ddd51a0c9505f",
+      "size_bytes": 176
+    },
+    "sensitivity_design.md": {
+      "path": "/root/.clearml/venvs-builds/3.12/code/results/factorial_2022_2023_all_births_sensitivity/sensitivity_design.md",
+      "sha256": "48410bdd614c3c8210a1f5f7b9efe7bc2e8d582adcb23be8a4dde04b3d66f71e",
+      "size_bytes": 863
+    }
+  },
+  "saved_models": [
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__booking_strict__early_entry__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__booking_strict__early_entry__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__booking_strict__full_cohort__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__booking_strict__full_cohort__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__pregnancy_oracle__early_entry__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__pregnancy_oracle__early_entry__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__pregnancy_oracle__full_cohort__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_preterm__pregnancy_oracle__full_cohort__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__booking_strict__early_entry__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__booking_strict__early_entry__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__booking_strict__full_cohort__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__booking_strict__full_cohort__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__pregnancy_oracle__early_entry__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__pregnancy_oracle__early_entry__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__pregnancy_oracle__full_cohort__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_nicu__pregnancy_oracle__full_cohort__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__booking_strict__early_entry__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__booking_strict__early_entry__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__booking_strict__full_cohort__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__booking_strict__full_cohort__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__pregnancy_oracle__early_entry__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__pregnancy_oracle__early_entry__lightgbm.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__pregnancy_oracle__full_cohort__logistic_regression.joblib",
+    "results/factorial_2022_2023_all_births_sensitivity/models/target_lbw__pregnancy_oracle__full_cohort__lightgbm.joblib"
+  ],
+  "split": {
+    "assigned_before_cohort_filtering": true,
+    "calibration_fraction": 0.2,
+    "calibration_rows_all_2022": 735397,
+    "seed": 2026,
+    "train_rows_all_2022": 2940632
+  },
+  "status": "PASS"
+}

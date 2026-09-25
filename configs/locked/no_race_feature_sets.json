@@ -1,0 +1,150 @@
+{
+  "booking_strict": {
+    "description": "Features defensibly available before pregnancy or by the first prenatal visit.",
+    "features": [
+      "diab_pre",
+      "hyper_pre",
+      "marital_status",
+      "mother_age",
+      "mother_bmi",
+      "mother_educ",
+      "mother_height_inches",
+      "mother_race",
+      "mother_weight_pre",
+      "prior_dead_births",
+      "prior_live_births",
+      "prior_terminations"
+    ],
+    "n_features": 12
+  },
+  "pregnancy_oracle": {
+    "description": "Retrospective upper bound: booking_strict plus selected pregnancy-period variables without reliable timestamps. Do not describe as late clinical prediction.",
+    "features": [
+      "diab_gest",
+      "diab_pre",
+      "eclampsia",
+      "hyper_gest",
+      "hyper_pre",
+      "marital_status",
+      "mother_age",
+      "mother_bmi",
+      "mother_educ",
+      "mother_height_inches",
+      "mother_race",
+      "mother_weight_pre",
+      "prior_dead_births",
+      "prior_live_births",
+      "prior_terminations"
+    ],
+    "n_features": 15
+  },
+  "oracle_incremental_over_booking": {
+    "features": [
+      "diab_gest",
+      "eclampsia",
+      "hyper_gest"
+    ],
+    "n_features": 3
+  },
+  "target_specific_sets": {
+    "target_preterm": {
+      "booking_strict": [
+        "diab_pre",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ],
+      "pregnancy_oracle": [
+        "diab_gest",
+        "diab_pre",
+        "eclampsia",
+        "hyper_gest",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ]
+    },
+    "target_nicu": {
+      "booking_strict": [
+        "diab_pre",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ],
+      "pregnancy_oracle": [
+        "diab_gest",
+        "diab_pre",
+        "eclampsia",
+        "hyper_gest",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ]
+    },
+    "target_lbw": {
+      "booking_strict": [
+        "diab_pre",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ],
+      "pregnancy_oracle": [
+        "diab_gest",
+        "diab_pre",
+        "eclampsia",
+        "hyper_gest",
+        "hyper_pre",
+        "marital_status",
+        "mother_age",
+        "mother_bmi",
+        "mother_educ",
+        "mother_height_inches",
+        "mother_race",
+        "mother_weight_pre",
+        "prior_dead_births",
+        "prior_live_births",
+        "prior_terminations"
+      ]
+    }
+  }
+}

@@ -1,0 +1,89 @@
+project:
+  clearml_project: pershin-medailab/Vache_Oganisyan/CDC Natality Audit
+  task_name: CDC 2022 to 2023 all-birth sensitivity analysis
+  tags:
+  - cdc-natality
+  - temporal-validation
+  - prospective-audit
+  - factorial-design
+  - sensitivity-analysis
+  - all-births
+  - multiples-included
+  output_uri: null
+data:
+  cdc2022: /clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_temporal_harmonized/cdc_natality_2022_harmonized.csv
+  cdc2023: /clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_temporal_harmonized/cdc_natality_2023_harmonized.csv
+  preprocessing_manifest: /clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_temporal_harmonized/preprocessing_manifest.json
+  feature_sets: /clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_factorial_design/feature_sets.json
+  feature_timing: /clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_factorial_design/feature_timing.csv
+  cohort_flow: /clearml_agent_cache/storage_manager/datasets/ds_062ba26c0ca24cef99549c2a2ab34e65/data/cdc_factorial_design/cohort_flow.csv
+  expected_rows:
+    '2022': 3676029
+    '2023': 3605081
+  verify_sha256_from_manifest: true
+output:
+  directory: results/factorial_2022_2023_all_births_sensitivity
+  overwrite: false
+  save_models: true
+  upload_models_to_clearml: true
+split:
+  seed: 2026
+  calibration_fraction: 0.2
+cohorts:
+  early_entry_max_month: 3
+  primary_population: is_us_resident == 1 (all plurality; multiple births included)
+  no_care_policy: retained in full cohort; unavailable to early-entry system
+  unknown_care_policy: retained as a separate access scenario
+targets:
+- target_preterm
+- target_nicu
+- target_lbw
+capacities:
+- 0.05
+- 0.1
+models:
+  logistic_regression:
+    solver: saga
+    penalty: l2
+    C: 1.0
+    max_iter: 2000
+    tol: 0.0001
+    class_weight: null
+    random_state: 2026
+  lightgbm:
+    objective: binary
+    n_estimators: 350
+    learning_rate: 0.05
+    num_leaves: 31
+    max_depth: -1
+    min_child_samples: 100
+    subsample: 1.0
+    colsample_bytree: 1.0
+    reg_alpha: 0.0
+    reg_lambda: 1.0
+    class_weight: null
+    scale_pos_weight: 1.0
+    random_state: 2026
+    n_jobs: -1
+    verbosity: -1
+preprocessing:
+  categorical_features:
+  - mother_race
+  - marital_status
+  - mother_educ
+  numeric_imputation: median
+  categorical_imputation: most_frequent
+  standardize_numeric: true
+  matrix_dtype: float32
+bootstrap:
+  enabled: true
+  seed: 2027
+  replicates: 200
+  sample_size: 50000
+  confidence_level: 0.95
+  feature_effect_metrics:
+  - pr_auc
+  - roc_auc
+  - brier
+execution:
+  fail_on_convergence_warning: false
