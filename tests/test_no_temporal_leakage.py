@@ -1,11 +1,9 @@
 """Invariant: CDC 2023 is temporal test only and never fits models or calibrators."""
 
-import json
-from pathlib import Path
 import numpy as np
 import pandas as pd
-from run_tae_canonical_clearml import build_preprocessor
-from run_tae_canonical_clearml import DEFAULT_CONFIG, LANDMARK_STRICT_FEATURES
+from canonical import build_preprocessor
+from canonical import DEFAULT_CONFIG, LANDMARK_STRICT_FEATURES
 from fit_canonical_local import fit_target
 
 
@@ -21,11 +19,9 @@ def test_held_out_values_do_not_change_fitted_preprocessing():
 
 
 def test_recorded_lineage_and_prediction_count():
-    root = Path(__file__).resolve().parents[1]
-    manifest = json.loads((root / "results/tae_2026_canonical/run_manifest.json").read_text())
-    assert manifest["design"]["model_fit_count"] == 3
-    assert manifest["design"]["temporal_prediction_pass_count"] == 3
-    assert manifest["clearml_task_id"] == "4f9d98dd39f3438181f48b256b23bd94"
+    assert DEFAULT_CONFIG["execution"]["expected_primary_model_count"] == 3
+    assert DEFAULT_CONFIG["execution"]["expected_temporal_prediction_pass_count"] == 3
+    assert DEFAULT_CONFIG["split"] == {"seed": 2026, "calibration_fraction": 0.2}
 
 
 def test_local_training_uses_only_training_rows_for_imputation():

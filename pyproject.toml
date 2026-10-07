@@ -5,30 +5,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "prenatal-scoreability"
 version = "0.1.0"
-description = "Article-oriented fixed-model equal-budget prenatal scoreability analysis"
+description = "Fixed-model four-cell audit of eligibility and capacity in clinical risk evaluation"
 license = {file = "LICENSE"}
-requires-python = ">=3.10,<3.13"
-dependencies = [
-  "clearml",
-  "python-dotenv",
-  "numpy",
-  "pandas",
-  "scipy",
-  "scikit-learn",
-  "lightgbm",
-  "PyYAML",
-  "joblib",
-]
+requires-python = ">=3.12,<3.13"
+dynamic = ["dependencies"]
 
-[project.optional-dependencies]
-dev = ["pytest", "ruff"]
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools]
 packages = []
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
-# Canonical replay core versions are pinned in requirements-replication.txt;
-# their source is results/tae_2026_canonical/package_versions.txt.
-# The unpinned project dependencies above are not a reproduction lockfile.

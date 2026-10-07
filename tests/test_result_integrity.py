@@ -1,6 +1,17 @@
-"""Invariant: canonical tables match manifest row counts, hashes, and locked effects."""
+"""Invariant: reference aggregates retain hashes, row counts, and locked effects."""
 
-import verify_submission
+import hashlib
+from pathlib import Path
+import reference_checks as verify_submission
+
+
+def test_reference_hashes():
+    root = Path(__file__).resolve().parents[1] / "results/reference"
+    entries = (root / "SHA256SUMS").read_text().splitlines()
+    assert len(entries) >= 29
+    for entry in entries:
+        digest, name = entry.split("  ", 1)
+        assert hashlib.sha256((root / name).read_bytes()).hexdigest() == digest, name
 
 
 def test_canonical_result_integrity():

@@ -1,4 +1,4 @@
-name: Verify research artifacts
+name: Test experiments
 
 on:
   push:
@@ -16,7 +16,6 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-      - run: python -m pip install -r requirements-replication.txt
+      - run: python -m pip install -r requirements.txt
       - run: python -m pip install -e . --no-deps
       - run: python -m pytest -q
-      - run: python paper/verify_submission.py

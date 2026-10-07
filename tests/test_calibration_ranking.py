@@ -1,7 +1,8 @@
 """Invariant: monotone Platt calibration preserves LightGBM score ranking and top-B sets."""
 
 import numpy as np
-from run_article_revision_analyses_clearml import apply_platt, rank_eligible_indices
+from calibration import apply_platt
+from canonical import rank_eligible_indices
 
 
 def test_platt_calibration_preserves_ranking():

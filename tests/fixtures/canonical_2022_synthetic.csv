@@ -1,0 +1,7 @@
+birth_year,birth_month,residence_status,mother_age,mother_race,marital_status,mother_educ,wic_benefits,mother_height_inches,mother_bmi,mother_weight_pre,weight_gain,prior_live_births,prior_dead_births,prior_terminations,prenatal_care_month,prenatal_visits,cigarettes_1_tri,diab_pre,diab_gest,hyper_pre,hyper_gest,eclampsia,delivery_method,delivery_method_binary,plurality,child_sex,gestation_combined_weeks,gestation_oe_weeks,gestation_oe_recode3,birth_weight_g,an_vent,admit_nicu,an_seiz,is_us_resident,is_singleton,target_preterm,target_nicu,target_lbw,target_gdm
+2022,1,1,30,01,1,4,1,64,25,150,30,1,0,0,3,12,0,0,1,0,0,0,1,1,1,F,36,39,2,3500,0,1,0,1,1,0,1,0,1
+2022,1,4,30,31,1,4,1,64,25,150,30,1,0,0,0,12,0,0,1,0,0,0,1,1,2,F,39,36,1,2499,0,0,0,0,0,1,0,1,1
+2022,1,1,30,,1,4,1,,,,30,,,,,12,0,0,,0,0,0,,,1,F,35,,,,0,,0,1,1,,,,
+2022,1,3,30,02,1,4,1,64,25,150,30,1,0,0,10,12,0,0,1,0,0,0,1,1,4,F,36,37,2,2500,0,0,0,1,0,0,0,0,1
+2022,1,2,30,06,1,4,1,64,25,150,30,1,0,0,1,12,0,0,1,0,0,0,1,1,1,F,,17,1,227,0,1,0,1,1,1,1,1,1
+2022,1,1,30,30,1,4,1,64,13,150,30,1,0,0,4,12,0,0,1,0,0,0,1,1,1,F,47,47,2,8165,0,0,0,1,1,0,0,0,1

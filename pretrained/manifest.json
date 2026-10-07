@@ -1,0 +1,102 @@
+{
+  "format": "lightgbm-native-text-and-preprocessing-json-v1",
+  "source": "Frozen CDC/NCHS 2022 research score instruments",
+  "python": "3.12.10",
+  "versions": {
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.0",
+    "lightgbm": "4.7.0",
+    "joblib": "1.5.3"
+  },
+  "native_loader_sha256": "2e43e6a377c49ddf6762f11939ea6344cd87252b6a1ed0c4902700be4c0d9200",
+  "parity_test_sha256": "10114b86d8bc2d95094b63552a80f25aa90c7f98052cda2de26c3a54d845585c",
+  "exporter_sha256": "87afd47d92beaef45e6d3bf20a372de539f06beaf0f2439ff177796450ff3e5f",
+  "targets": {
+    "target_preterm": {
+      "source_bundle_sha256": "f3beafc35acad569f2362110289b1b3387b84c0256f0452f4fc6387443fccfb7",
+      "model_sha256": "877bdaa1073425b7a01b9fefbc7de5b63325e29d78d15bbdd1bb94e790d5280c",
+      "preprocessing_sha256": "223399d1b9d8a366416f573cade2fd40b542638260fca5b4fd15d22d04213a56",
+      "trees": 350,
+      "synthetic_parity": {
+        "cases": [
+          "float64_missing",
+          "float32_missing",
+          "mixed_dtypes",
+          "nullable_float64",
+          "nullable_float32",
+          "integer",
+          "nullable_integer",
+          "object_nan",
+          "object_none",
+          "numeric_strings",
+          "race_strings",
+          "all_missing",
+          "single_row",
+          "reordered_extra_columns",
+          "complete_codebook"
+        ],
+        "rows": 6182,
+        "matrix_max_absolute_difference": 0.0,
+        "probability_max_absolute_difference": 0.0
+      }
+    },
+    "target_nicu": {
+      "source_bundle_sha256": "4e06e0eb4e50a347257a5b64b0819b34b0e64be65cd219d00e8597e4bd207292",
+      "model_sha256": "b7f4a05ab2768c7c250d17b06868686ed1b7ce90c91a9e116774063f251d4c3c",
+      "preprocessing_sha256": "1889b2127a4ba82160c8afca9ba66ae12ddab3b4cec652be6db2da25b989b0ee",
+      "trees": 350,
+      "synthetic_parity": {
+        "cases": [
+          "float64_missing",
+          "float32_missing",
+          "mixed_dtypes",
+          "nullable_float64",
+          "nullable_float32",
+          "integer",
+          "nullable_integer",
+          "object_nan",
+          "object_none",
+          "numeric_strings",
+          "race_strings",
+          "all_missing",
+          "single_row",
+          "reordered_extra_columns",
+          "complete_codebook"
+        ],
+        "rows": 6182,
+        "matrix_max_absolute_difference": 0.0,
+        "probability_max_absolute_difference": 0.0
+      }
+    },
+    "target_lbw": {
+      "source_bundle_sha256": "223eaa5c6a4e6bfb9452542743a880c3414dc98a5b41507f465f448e3d144c73",
+      "model_sha256": "66b135b11d962f4839abb9e6e24e4a6f26e745292b862db6443277fb376caf6f",
+      "preprocessing_sha256": "a6ffb07e441e4be4b30f2c7c26f1a9bbf251eda86a11f02aba28f02817692e7f",
+      "trees": 350,
+      "synthetic_parity": {
+        "cases": [
+          "float64_missing",
+          "float32_missing",
+          "mixed_dtypes",
+          "nullable_float64",
+          "nullable_float32",
+          "integer",
+          "nullable_integer",
+          "object_nan",
+          "object_none",
+          "numeric_strings",
+          "race_strings",
+          "all_missing",
+          "single_row",
+          "reordered_extra_columns",
+          "complete_codebook"
+        ],
+        "rows": 6182,
+        "matrix_max_absolute_difference": 0.0,
+        "probability_max_absolute_difference": 0.0
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
+"""Extract the frozen 15-column CDC 2024 evaluation schema from US public-use TXT."""
+
+import argparse
 import csv
-import sys
 from pathlib import Path
 
 def harmonize(input_path, output_path):
@@ -115,21 +117,18 @@ def harmonize(input_path, output_path):
 
     print(f"Done. Processed total {processed} rows.")
 
-if __name__ == '__main__':
-    in_file = 'data/cdc_2024/Nat2024PublicUS.txt'
-    out_file = 'data/cdc_2024/harmonized_cdc_2024.csv'
-    # Use alternative input if provided via command line
-    if len(sys.argv) > 1:
-        in_file = sys.argv[1]
-    
-    # Let's ensure the file exists before running
-    if not Path(in_file).exists():
-        # Maybe it's named Nat2024us.txt
-        alt_file = 'data/cdc_2024/Nat2024us.txt'
-        if Path(alt_file).exists():
-            in_file = alt_file
-        else:
-            print(f"Error: Could not find raw file {in_file} or {alt_file}")
-            sys.exit(1)
-            
-    harmonize(in_file, out_file)
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if not args.input.is_file():
+        raise FileNotFoundError(args.input)
+    if args.output.exists():
+        raise FileExistsError(args.output)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    harmonize(args.input, args.output)
+
+
+if __name__ == "__main__":
+    main()

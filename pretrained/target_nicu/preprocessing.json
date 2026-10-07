@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "target": "target_nicu",
+  "features": [
+    "mother_race",
+    "mother_height_inches",
+    "mother_bmi",
+    "mother_weight_pre",
+    "prior_live_births",
+    "prior_dead_births",
+    "prior_terminations",
+    "diab_pre",
+    "hyper_pre"
+  ],
+  "feature_set": "landmark_strict",
+  "training_population": "target-specific U.S.-resident singleton births",
+  "thresholds": {
+    "0.05": 0.14372704023597924,
+    "0.1": 0.11958385704221117
+  },
+  "preprocessing": {
+    "numeric": {
+      "features": [
+        "mother_height_inches",
+        "mother_bmi",
+        "mother_weight_pre",
+        "prior_live_births",
+        "prior_dead_births",
+        "prior_terminations",
+        "diab_pre",
+        "hyper_pre"
+      ],
+      "medians": [
+        64.0,
+        26.4,
+        153.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "means": [
+        64.04563298873639,
+        27.729450408803167,
+        161.98569188913066,
+        1.1137060540122543,
+        0.01483904698202508,
+        0.43956606468036585,
+        0.011558884871883881,
+        0.02860422716868881
+      ],
+      "scales": [
+        2.853262958862014,
+        6.822129473006175,
+        42.209057253438175,
+        1.312616257090914,
+        0.1873252742792049,
+        0.9124641441511671,
+        0.10688908762077828,
+        0.16669140756730938
+      ]
+    },
+    "categorical": {
+      "feature": "mother_race",
+      "mode": 1.0,
+      "categories": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ]
+    },
+    "matrix_dtype": "float32"
+  }
+}

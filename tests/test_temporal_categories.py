@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from run_temporal_four_cell import normalize_frame
-from run_tae_canonical_clearml import build_preprocessor, LANDMARK_STRICT_FEATURES
+from canonical import build_preprocessor, LANDMARK_STRICT_FEATURES
 
 
 def test_raw_numeric_race_strings_match_training_encoding():

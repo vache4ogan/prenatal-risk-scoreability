@@ -2,7 +2,7 @@
 
 import numpy as np
 from run_temporal_four_cell import bootstrap
-import run_tae_shapley_fixed_b_bootstrap_clearml as audit
+import four_cell as audit
 
 
 def test_paired_full_size_resamples():
