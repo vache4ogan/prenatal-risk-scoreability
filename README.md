@@ -1,4 +1,4 @@
-# Eligibility and Capacity in Clinical Risk Evaluation
+# Same Top Fraction, Different Workload: Auditing Eligibility and Capacity in Clinical Risk Evaluation
 
 Experiments for **Same Top Fraction, Different Workload: Auditing Eligibility and
 Capacity in Clinical Risk Evaluation** ([TAE 2026 paper](https://openreview.net/forum?id=puYbvC47rw)).
