@@ -21,8 +21,8 @@ def main():
         raise ValueError("No CSV found in the dataset")
     
     print(f"Loading {csv_files[0]}...")
-    # use dtype=str to prevent mixed type issues, then convert what we need
-    df = pd.read_csv(csv_files[0], dtype=str)
+    # Match numeric MRACE31 categories used to fit the frozen preprocessor.
+    df = pd.read_csv(csv_files[0], low_memory=False)
     print(f"Loaded {len(df)} rows from dataset.")
     
     # Check if target columns exist, if not, compute them based on harmonization structure
@@ -82,10 +82,9 @@ def main():
         model = data["model"]
         features = data["features"]
         
-        # Convert feature columns to numeric where possible, others remain object/str
+        # Race is categorical semantically but its stored codes must be numeric.
         for f in features:
-            if f != "mother_race":
-                df[f] = pd.to_numeric(df[f], errors="coerce")
+            df[f] = pd.to_numeric(df[f], errors="raise")
         
         # Filter for "all-record upper bound"
         # primary population: is_us_resident==1 & is_singleton==1 & target is known
@@ -100,7 +99,7 @@ def main():
         y_true = df_eval[target].astype(int).values
         
         print(f"Applying preprocessing to {len(X_eval)} records...")
-        X_trans = preprocessor.transform(X_eval)
+        X_trans = preprocessor.transform(X_eval).astype(np.float32)
         
         print("Generating predictions...")
         y_pred_proba = model.predict_proba(X_trans)[:, 1]

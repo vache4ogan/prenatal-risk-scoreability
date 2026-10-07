@@ -1,4 +1,22 @@
 {
+  "figure3": {
+    "heatmap_shape": [
+      3,
+      9
+    ],
+    "scatter_color": "availability_relation",
+    "scatter_shape": "model_quality",
+    "scatter_size": "constant; nominal fraction not encoded",
+    "zoom_conditions": 29,
+    "zoom_x_pp": [
+      -3.5,
+      0.5
+    ],
+    "zoom_y_pp": [
+      0.0,
+      18.0
+    ]
+  },
   "inputs": {
     "source_data\\cohort_counts_validation.csv": "562af96c77a20ee31c61e235945dbf9877ed2b6b592994ef96ce19c94b90f589",
     "source_data\\shapley_bootstrap_replicates.csv": "37a16770946968e8a08747763268c50afc7817b4580242cb0e9813ae0e215003",
@@ -11,12 +29,14 @@
     "mean_sign_reversals": 18,
     "robust_negative_fixed_budget_conditions": 9,
     "shapley_rows": 6,
-    "synthetic_conditions": 81
+    "synthetic_conditions": 81,
+    "synthetic_unique_keys": 81
   },
   "outputs": {
-    "figures\\figure1_headline.pdf": "a15b94e8ae6ba7859368b388f6adc775a45b37c4351d0d3a4fb6fd5cd9e1056d",
-    "figures\\figure1_headline.png": "0a8a19130e4cfc99cb4ede2e12bb0821497aad2eeabd3087a2dfa9b6c5855812",
-    "figures\\figure3_synthetic_stress_test.pdf": "673395e0bf25c2fa3c13532af2c7e2e061ca6e23bd7b77bde72c72da78ecb70c",
-    "figures\\figure3_synthetic_stress_test.png": "7427bc56e63b8c9f8979b52dd248e09fdc923c3cc99d184a151e53f73cf55d60"
+    "figures\\figure1_headline.pdf": "f439a1bf914a6ed39f44d068229aeac85f7cd2be35569387b1fe9aca5fb1a99c",
+    "figures\\figure1_headline.png": "d7dbbe77af9cdcb76084b8a84dbab4ffddd35200cd898532d0ad5b025038d93a",
+    "figures\\figure3_synthetic_stress_test.pdf": "5959acd15748478a67e29d06c9c99afa70107c5fa69ecdda3e8bbd9e13e51fba",
+    "figures\\figure3_synthetic_stress_test.png": "8b1041c929c54eb88ae35f4a104c0d4ed509f5b02c155d070473e8b5519e19e1",
+    "source_data\\figure1_headline_data.csv": "76ea64e7ff767572d7a829c006e901d5727c76ada928c8f069e1bac3fe7f7445"
   }
 }

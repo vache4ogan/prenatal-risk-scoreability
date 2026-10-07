@@ -19,7 +19,8 @@ TARGET_LABEL = {
 
 
 def interval(point: float, low: float, high: float, digits: int = 2) -> str:
-    return f"{point:.{digits}f} [{low:.{digits}f}, {high:.{digits}f}]"
+    return (r"\shortstack{" + f"{point:.{digits}f}" + r"\\{\scriptsize "
+            + f"[{low:.{digits}f}, {high:.{digits}f}]" + "}}")
 
 
 def write(path: Path, lines: list[str]) -> None:
@@ -69,9 +70,9 @@ def table_main_shapley(shapley: pd.DataFrame, shares: pd.DataFrame) -> None:
     lines = [
         r"\begin{table}[!htbp]",
         r"\centering",
-        r"\caption{Same nominal top 10\%, different operational result. Population capture uses the full target-population event denominator. $\phi_E$ and $\phi_B$ are the symmetric eligibility and capacity allocations; conditional empirical-resampling ranges appear in Appendix~\ref{tab:full_shapley}.}",
+        r"\caption{Same nominal top 10\%, different operational result. Stacked counts and capture report early entry above all records. $\phi_E$ and $\phi_B$ are the symmetric eligibility and capacity allocations. Conditional ranges appear in Appendix~\ref{app:shapley}, Table~\ref{tab:full_shapley}.}",
         r"\label{tab:main_results}",
-        r"\footnotesize",
+        r"\small",
         r"\setlength{\tabcolsep}{2.5pt}",
         r"\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrrrrrr@{}}",
         r"\toprule",
@@ -85,9 +86,9 @@ def table_main_shapley(shapley: pd.DataFrame, shares: pd.DataFrame) -> None:
             " & ".join(
                 [
                     TARGET_LABEL[target],
-                    f"{int(row['B_early_point']):,}$\\rightarrow${int(row['B_all_point']):,}",
+                    r"\shortstack[r]{" + f"{int(row['B_early_point']):,}" + r"\\" + f"{int(row['B_all_point']):,}" + "}",
                     f"+{100 * (row['B_all_point'] / row['B_early_point'] - 1):.1f}\\%",
-                    f"{100 * row['C00_early_Bearly']:.2f}$\\rightarrow${100 * row['C11_all_Ball']:.2f}\\%",
+                    r"\shortstack[r]{" + f"{100 * row['C00_early_Bearly']:.2f}" + r"\\" + f"{100 * row['C11_all_Ball']:.2f}" + "}",
                     f"+{100 * (row['C11_all_Ball'] / row['C00_early_Bearly'] - 1):.1f}\\%",
                     f"{row['shapley_availability_point_pp']:.2f}/\\textbf{{{row['shapley_capacity_point_pp']:.2f}}}",
                     r"\textbf{" + f"{share_row['capacity_share_pct']:.1f}\\%" + "}",
@@ -95,6 +96,8 @@ def table_main_shapley(shapley: pd.DataFrame, shares: pd.DataFrame) -> None:
             )
             + r" \\"
         )
+        if target != TARGET_ORDER[-1]:
+            lines.append(r"\addlinespace[3pt]")
     lines.extend(
         [
             r"\bottomrule",
@@ -231,12 +234,11 @@ def table_full_shapley(shapley: pd.DataFrame, shares: pd.DataFrame) -> None:
         r"\centering",
         r"\caption{Complete symmetric-allocation results. All effects are percentage-point changes in population event capture; brackets give central 95\% paired empirical-resampling ranges conditional on frozen scores and observed budgets.}",
         r"\label{tab:full_shapley}",
-        r"\scriptsize",
+        r"\footnotesize",
         r"\setlength{\tabcolsep}{3.2pt}",
-        r"\resizebox{\textwidth}{!}{%",
-        r"\begin{tabular}{lcccccc}",
+        r"\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccccc@{}}",
         r"\toprule",
-        r"Outcome & $q$ & Joint $\Delta$ & $\phi_E$ & $\phi_B$ & Symmetric share $s_B$ & Interaction \\",
+        r"Outcome & $q$ & Joint $\Delta$ & $\phi_E$ & $\phi_B$ & $s_B$ (\%) & Interaction \\",
         r"\midrule",
     ]
     for _, row in data.iterrows():
@@ -265,8 +267,7 @@ def table_full_shapley(shapley: pd.DataFrame, shares: pd.DataFrame) -> None:
                         row["share_low"],
                         row["share_high"],
                         digits=1,
-                    )
-                    + r"\%",
+                    ),
                     interval(
                         row["interaction_point_pp"],
                         row["interaction_ci_lower_pp"],
@@ -276,7 +277,8 @@ def table_full_shapley(shapley: pd.DataFrame, shares: pd.DataFrame) -> None:
             )
             + r" \\"
         )
-    lines.extend([r"\bottomrule", r"\end{tabular}%", r"}", r"\end{table}"])
+        lines.append(r"\addlinespace[3pt]")
+    lines.extend([r"\bottomrule", r"\end{tabular*}", r"\end{table}"])
     write(OUT / "table_full_shapley.tex", lines)
 
 
@@ -297,12 +299,11 @@ def table_four_cells(shapley: pd.DataFrame) -> None:
     lines = [
         r"\begin{table}[htbp]",
         r"\centering",
-        r"\caption{Auditable four-cell point estimates. Each cell reports population event capture in percent followed by selected true events in parentheses. The two budgets are exact selected counts.}",
+        r"\caption{Auditable CDC 2023 four-cell point estimates. Each cell stacks population capture (percent) above selected true events in parentheses. Budgets stack early-sized above all-record-sized exact selected counts.}",
         r"\label{tab:four_cells}",
-        r"\scriptsize",
+        r"\footnotesize",
         r"\setlength{\tabcolsep}{3.4pt}",
-        r"\resizebox{\textwidth}{!}{%",
-        r"\begin{tabular}{lccrrrr}",
+        r"\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lccrrrr@{}}",
         r"\toprule",
         r"Outcome & $q$ & Budgets $b_e/b_a$ & $C_{00}$: $S_e,b_e$ & $C_{01}$: $S_e,b_a$ & $C_{10}$: $S_a,b_e$ & $C_{11}$: $S_a,b_a$ \\",
         r"\midrule",
@@ -318,14 +319,15 @@ def table_four_cells(shapley: pd.DataFrame) -> None:
         ]:
             capture = float(row[column])
             selected_events = int(round(capture * event_n))
-            cells.append(f"{100 * capture:.2f} ({selected_events:,})")
+            cells.append(r"\shortstack[r]{" + f"{100 * capture:.2f}" + r"\\" + f"({selected_events:,})" + "}")
         lines.append(
             f"{TARGET_LABEL[row['target']]} & {int(100 * row['nominal_fraction'])}\\% & "
-            f"{int(row['B_early_point']):,}/{int(row['B_all_point']):,} & "
+            r"\shortstack{" + f"{int(row['B_early_point']):,}" + r"\\" + f"{int(row['B_all_point']):,}" + "} & "
             + " & ".join(cells)
             + r" \\"
         )
-    lines.extend([r"\bottomrule", r"\end{tabular}%", r"}", r"\end{table}"])
+        lines.append(r"\addlinespace[3pt]")
+    lines.extend([r"\bottomrule", r"\end{tabular*}", r"\end{table}"])
     write(OUT / "table_four_cells.tex", lines)
 
 
@@ -412,6 +414,34 @@ def table_three_protocols() -> None:
     write(OUT / "table_three_protocols_q10.tex", lines)
 
 
+def table_temporal_2024() -> None:
+    data = pd.read_csv(DATA / "temporal_2024/summary.csv")
+    if len(data) != 6 or data.duplicated(["target", "nominal_fraction"]).any():
+        raise ValueError("Expected six distinct temporal replication contrasts")
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{CDC 2024 four-cell replication with the frozen 2022 pipelines. Capture changes and allocations are percentage points; capacity shares include central 95\% ranges from 500 paired resamples.}",
+        r"\label{tab:temporal_2024}",
+        r"\small",
+        r"\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrrrrr@{}}",
+        r"\toprule",
+        r"Outcome & $q$ & Joint gain & Eligibility & Capacity & Capacity share (\%) \\",
+        r"\midrule",
+    ]
+    for target in TARGET_ORDER:
+        for q in [0.05, 0.1]:
+            row = data.loc[(data.target == target) & np.isclose(data.nominal_fraction, q)].iloc[0]
+            lines.append(
+                f"{TARGET_LABEL[target]} & {q:.0%} & "
+                f"{100*row.total_topq_contrast:.2f} & {100*row.shapley_availability:.2f} & "
+                f"{100*row.shapley_capacity:.2f} & {100*row.capacity_share:.1f} "
+                f"[{100*row.capacity_share_lower:.1f}, {100*row.capacity_share_upper:.1f}] \\\\"
+            .replace("%", r"\%"))
+    lines.extend([r"\bottomrule", r"\end{tabular*}", r"\end{table}"])
+    write(OUT / "table_temporal_2024.tex", lines)
+
+
 def main() -> None:
     shapley, shares = load_shapley()
     table_main_shapley(shapley, shares)
@@ -422,7 +452,8 @@ def main() -> None:
     table_four_cells(shapley)
     table_model_sanity()
     table_three_protocols()
-    print("PASS: generated 8 LaTeX tables from source-data CSV files")
+    table_temporal_2024()
+    print("PASS: generated 9 LaTeX tables from source-data CSV files")
 
 
 if __name__ == "__main__":

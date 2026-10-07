@@ -16,6 +16,10 @@ import pandas as pd
 import yaml
 
 
+def test_synthetic_smoke():
+    assert main() == 0
+
+
 def main() -> int:
     repo = Path(__file__).resolve().parents[1]
     script = repo / "scripts" / "experiments" / "run_tae_synthetic.py"

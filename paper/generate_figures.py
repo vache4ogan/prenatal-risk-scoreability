@@ -61,12 +61,12 @@ def style() -> None:
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
-            "font.size": 10,
-            "axes.titlesize": 11.5,
-            "axes.labelsize": 10,
-            "xtick.labelsize": 9,
-            "ytick.labelsize": 9,
-            "legend.fontsize": 9.2,
+            "font.size": 11,
+            "axes.titlesize": 12,
+            "axes.labelsize": 10.7,
+            "xtick.labelsize": 10.7,
+            "ytick.labelsize": 10.7,
+            "legend.fontsize": 10.7,
             "axes.edgecolor": "#8C939C",
             "axes.linewidth": 0.8,
             "pdf.fonttype": 42,
@@ -78,10 +78,69 @@ def style() -> None:
 def save(fig: plt.Figure, stem: str) -> list[Path]:
     OUT.mkdir(parents=True, exist_ok=True)
     paths = [OUT / f"{stem}.pdf", OUT / f"{stem}.png"]
-    fig.savefig(paths[0], bbox_inches="tight", facecolor="white")
-    fig.savefig(paths[1], dpi=320, bbox_inches="tight", facecolor="white")
+    # Preserve the designed width and the font scale at a 6.5-inch insertion.
+    fig.savefig(paths[0], facecolor="white")
+    fig.savefig(paths[1], dpi=320, facecolor="white")
     plt.close(fig)
     return paths
+
+
+SYNTHETIC_LEVELS = {
+    "availability_relation": [
+        "higher_risk_less_available", "risk_independent", "higher_risk_more_available"
+    ],
+    "model_quality": ["good", "medium", "weak"],
+    "availability_target_fraction": [0.5, 0.7, 0.9],
+    "nominal_fraction": [0.05, 0.10, 0.20],
+}
+ZOOM_X = (-3.5, 0.5)
+ZOOM_Y = (0.0, 18.0)
+
+
+def validate_synthetic(synthetic: pd.DataFrame) -> None:
+    keys = list(SYNTHETIC_LEVELS)
+    expected = pd.MultiIndex.from_product(SYNTHETIC_LEVELS.values(), names=keys)
+    observed = pd.MultiIndex.from_frame(synthetic[keys])
+    if (
+        len(synthetic) != len(expected)
+        or not observed.is_unique
+        or not synthetic["condition_id"].is_unique
+        or synthetic["condition_id"].isna().any()
+        or len(expected.difference(observed))
+        or len(observed.difference(expected))
+    ):
+        raise ValueError("Synthetic data must contain all 81 unique condition keys and IDs")
+
+    numeric = [
+        "mean_naive_top_fraction_effect",
+        "mean_availability_effect_at_all_budget",
+        "q025_availability_effect_at_all_budget",
+        "q975_availability_effect_at_all_budget",
+        "sign_reversal_replicate_fraction",
+    ]
+    if not np.isfinite(synthetic[numeric].to_numpy()).all():
+        raise ValueError("Synthetic plot inputs must be finite")
+    lower = synthetic["q025_availability_effect_at_all_budget"]
+    upper = synthetic["q975_availability_effect_at_all_budget"]
+    if (lower > upper).any():
+        raise ValueError("Synthetic fixed-budget interval bounds are reversed")
+    if not synthetic["sign_reversal_replicate_fraction"].between(0, 1).all():
+        raise ValueError("Synthetic reversal frequencies must lie in [0, 1]")
+
+    expected_flags = {
+        "naive_fixed_budget_sign_reversal": (
+            (synthetic["mean_naive_top_fraction_effect"] > 0)
+            & (synthetic["mean_availability_effect_at_all_budget"] < 0)
+        ),
+        "fixed_budget_interval_below_zero": upper < 0,
+        "fixed_budget_interval_above_zero": lower > 0,
+    }
+    for name, expected_flag in expected_flags.items():
+        if (
+            not pd.api.types.is_bool_dtype(synthetic[name])
+            or not synthetic[name].eq(expected_flag).all()
+        ):
+            raise ValueError(f"Synthetic flag {name} is inconsistent with its effects")
 
 
 def load_inputs() -> dict[str, pd.DataFrame]:
@@ -123,8 +182,7 @@ def load_inputs() -> dict[str, pd.DataFrame]:
         raise ValueError("Bootstrap decomposition identity failed")
 
     synthetic = frames["synthetic"]
-    if len(synthetic) != 81:
-        raise ValueError(f"Expected 81 synthetic conditions, found {len(synthetic)}")
+    validate_synthetic(synthetic)
     if int(synthetic["naive_fixed_budget_sign_reversal"].sum()) != 18:
         raise ValueError("Expected 18 mean sign reversals")
     if int(synthetic["fixed_budget_interval_below_zero"].sum()) != 9:
@@ -160,7 +218,7 @@ def figure1(shapley: pd.DataFrame) -> tuple[list[Path], pd.DataFrame]:
     fig, (ax_workload, ax_gain) = plt.subplots(
         1,
         2,
-        figsize=(8.6, 3.25),
+        figsize=(8.6, 3.6),
         gridspec_kw={"width_ratios": [1.06, 1.14]},
     )
 
@@ -182,7 +240,7 @@ def figure1(shapley: pd.DataFrame) -> tuple[list[Path], pd.DataFrame]:
             ha="left",
             va="center",
             color=NAVY,
-            fontsize=7.8,
+            fontsize=10.7,
             weight="bold",
         )
         ax_workload.text(
@@ -192,7 +250,7 @@ def figure1(shapley: pd.DataFrame) -> tuple[list[Path], pd.DataFrame]:
             ha="right",
             va="center",
             color=INK,
-            fontsize=7.8,
+            fontsize=10.7,
         )
     increase = 100 * (mean_all_budget / mean_early_budget - 1)
     ax_workload.text(
@@ -202,13 +260,13 @@ def figure1(shapley: pd.DataFrame) -> tuple[list[Path], pd.DataFrame]:
         ha="center",
         va="center",
         color=ORANGE,
-        fontsize=9.0,
+        fontsize=10.7,
         weight="bold",
     )
     ax_workload.set_yticks(y, ["Early entry", "All-record\nupper bound"])
     ax_workload.set_xlim(0, 3.72)
     ax_workload.set_xlabel("Target-specific cohort size (millions)")
-    ax_workload.set_title("(a) Same fraction, different workload", loc="left", weight="bold")
+    ax_workload.set_title("(a) Same fraction, different workload", loc="left", weight="bold", fontsize=11.5)
     ax_workload.spines[["top", "right", "left"]].set_visible(False)
     ax_workload.tick_params(axis="y", length=0)
     ax_workload.grid(axis="x", color=GRID, linewidth=0.7, zorder=0)
@@ -235,7 +293,7 @@ def figure1(shapley: pd.DataFrame) -> tuple[list[Path], pd.DataFrame]:
             ha="center",
             va="center",
             color="white",
-            fontsize=8.5,
+            fontsize=10.7,
             weight="bold",
         )
         ax_gain.text(
@@ -245,33 +303,33 @@ def figure1(shapley: pd.DataFrame) -> tuple[list[Path], pd.DataFrame]:
             ha="center",
             va="center",
             color="white",
-            fontsize=8.5,
+            fontsize=10.7,
             weight="bold",
         )
         ax_gain.text(
             total[index] + 0.18,
             ypos_value,
-            f"{total[index]:.2f} pp  |  {q10.loc[index, 'capacity_share_pct']:.1f}% capacity",
+            f"{total[index]:.2f} pp\n{q10.loc[index, 'capacity_share_pct']:.1f}% capacity",
             ha="left",
             va="center",
             color=INK,
-            fontsize=7.6,
+            fontsize=10.7,
         )
     ax_gain.set_yticks(ypos, [TARGET_SHORT[target] for target in TARGET_ORDER])
-    ax_gain.set_xlim(0, 9.05)
-    ax_gain.set_xlabel("Increase in population event capture (percentage points)")
-    ax_gain.set_title("(b) What the apparent gain contains", loc="left", weight="bold")
+    ax_gain.set_xlim(0, total.max() + 3.5)
+    ax_gain.set_xlabel("Increase in population capture (pp)")
+    ax_gain.set_title("(b) Allocation of the joint gain", loc="left", weight="bold", fontsize=11.5)
     ax_gain.spines[["top", "right", "left"]].set_visible(False)
     ax_gain.tick_params(axis="y", length=0)
     ax_gain.grid(axis="x", color=GRID, linewidth=0.7, zorder=0)
     ax_gain.legend(
         frameon=False,
         loc="upper center",
-        bbox_to_anchor=(0.52, -0.25),
+        bbox_to_anchor=(0.52, -0.24),
         ncol=2,
     )
 
-    fig.subplots_adjust(left=0.075, right=0.995, top=0.87, bottom=0.24, wspace=0.33)
+    fig.subplots_adjust(left=0.12, right=0.985, top=0.87, bottom=0.28, wspace=0.35)
     return save(fig, "figure1_headline"), q10
 
 
@@ -507,79 +565,85 @@ def figure2(
 
 
 def figure3(synthetic: pd.DataFrame) -> list[Path]:
+    validate_synthetic(synthetic)
     relation_color = {
         "higher_risk_less_available": BLUE,
         "risk_independent": GRAY,
         "higher_risk_more_available": ORANGE,
     }
     relation_label = {
-        "higher_risk_less_available": "Higher risk less available",
-        "risk_independent": "Risk-independent availability",
-        "higher_risk_more_available": "Higher risk more available",
+        "higher_risk_less_available": "Less available",
+        "risk_independent": "Risk-independent",
+        "higher_risk_more_available": "More available",
     }
     quality_marker = {"good": "o", "medium": "s", "weak": "^"}
 
-    fig, (ax_scatter, ax_heat) = plt.subplots(
-        1,
-        2,
-        figsize=(8.6, 3.75),
-        gridspec_kw={"width_ratios": [1.08, 1.0]},
-    )
-
     x_all = 100 * synthetic["mean_availability_effect_at_all_budget"]
     y_all = 100 * synthetic["mean_naive_top_fraction_effect"]
-    x_min = min(-3.55, x_all.min() - 0.4)
-    x_max = x_all.max() + 0.6
-    y_max = y_all.max() + 0.8
-    ax_scatter.add_patch(
-        Rectangle(
-            (x_min, 0),
-            -x_min,
-            y_max,
-            facecolor="#FBE8DE",
-            edgecolor="none",
-            alpha=0.75,
-            zorder=0,
-        )
+    zoom_mask = x_all.between(*ZOOM_X) & y_all.between(*ZOOM_Y)
+    reversal_count = int(synthetic["naive_fixed_budget_sign_reversal"].sum())
+
+    fig = plt.figure(figsize=(8.6, 5.9))
+    scatter_grid = fig.add_gridspec(
+        1, 2, left=0.085, right=0.98, bottom=0.54, top=0.92, wspace=0.34
     )
-    for relation, color in relation_color.items():
-        for quality, marker in quality_marker.items():
-            rows = synthetic[
-                (synthetic["availability_relation"] == relation)
-                & (synthetic["model_quality"] == quality)
-            ]
-            ax_scatter.scatter(
-                100 * rows["mean_availability_effect_at_all_budget"],
-                100 * rows["mean_naive_top_fraction_effect"],
-                color=color,
-                marker=marker,
-                s=34 + 115 * rows["nominal_fraction"],
-                alpha=0.82,
-                edgecolors="white",
-                linewidths=0.45,
-                zorder=3,
+    ax_scatter = fig.add_subplot(scatter_grid[0, 0])
+    ax_zoom = fig.add_subplot(scatter_grid[0, 1])
+    ax_heat = fig.add_axes([0.085, 0.105, 0.795, 0.135])
+    ax_colorbar = fig.add_axes([0.905, 0.105, 0.016, 0.135])
+
+    def scatter_panel(ax: plt.Axes, rows: pd.DataFrame, xlim: tuple, ylim: tuple) -> None:
+        ax.add_patch(
+            Rectangle(
+                (xlim[0], 0), -xlim[0], ylim[1],
+                facecolor="#FBE8DE", edgecolor="none", alpha=0.65, zorder=0,
             )
-    ax_scatter.axvline(0, color="#555B62", linewidth=1.0)
-    ax_scatter.axhline(0, color="#555B62", linewidth=1.0)
-    diagonal = np.linspace(max(0, x_min), min(x_max, y_max), 100)
-    ax_scatter.plot(diagonal, diagonal, color="#9BA1A8", linestyle="--", linewidth=1.0)
-    ax_scatter.text(
-        x_min + 0.22,
-        y_max - 1.0,
-        "18/81 mean\nsign reversals",
-        color=ORANGE,
-        weight="bold",
-        fontsize=10,
-        va="top",
+        )
+        for relation, color in relation_color.items():
+            for quality, marker in quality_marker.items():
+                subset = rows[
+                    (rows["availability_relation"] == relation)
+                    & (rows["model_quality"] == quality)
+                ]
+                ax.scatter(
+                    100 * subset["mean_availability_effect_at_all_budget"],
+                    100 * subset["mean_naive_top_fraction_effect"],
+                    color=color, marker=marker, s=48, alpha=0.9,
+                    edgecolors="white", linewidths=0.5, zorder=3,
+                )
+        ax.set_xlim(*xlim)
+        ax.set_ylim(*ylim)
+        ax.axvline(0, color="#555B62", linewidth=0.9)
+        ax.axhline(0, color="#555B62", linewidth=0.9)
+        ax.set_axisbelow(True)
+        ax.grid(color=GRID, linewidth=0.6)
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.set_xlabel(r"Eligibility contrast at fixed $b_a$ (pp)")
+        ax.set_ylabel("Joint top-q contrast (pp)")
+
+    scatter_panel(
+        ax_scatter, synthetic,
+        (min(ZOOM_X[0], x_all.min() - 0.5), x_all.max() + 1.0),
+        (min(-0.6, y_all.min() - 0.5), y_all.max() + 1.5),
     )
-    ax_scatter.set_xlim(x_min, x_max)
-    ax_scatter.set_ylim(-0.6, y_max)
-    ax_scatter.set_xlabel(r"Eligibility effect at fixed budget $b_a$ (pp)")
-    ax_scatter.set_ylabel("Cohort-relative effect (pp)")
-    ax_scatter.set_title("(a) Joint and fixed-budget effects", loc="left", weight="bold")
-    ax_scatter.grid(color=GRID, linewidth=0.7, zorder=0)
-    ax_scatter.spines["top"].set_visible(False)
-    ax_scatter.spines["right"].set_visible(False)
+    # The detail is a geometric subset, not a filter for sign reversals or color.
+    scatter_panel(ax_zoom, synthetic.loc[zoom_mask], ZOOM_X, ZOOM_Y)
+    ax_scatter.set_title(
+        f"(a) Full grid ({len(synthetic)} conditions)", loc="left", weight="bold"
+    )
+    ax_zoom.set_title(
+        f"(b) Near-zero detail ({int(zoom_mask.sum())}/{len(synthetic)})",
+        loc="left", weight="bold",
+    )
+    ax_scatter.set_xticks([-3, 0, 5, 10, 15, 20])
+    ax_scatter.set_yticks(np.arange(0, y_all.max() + 1, 5))
+    ax_zoom.set_xticks([-3, -2, -1, 0, 0.5])
+    ax_zoom.set_yticks(np.arange(ZOOM_Y[0], ZOOM_Y[1] + 1, 3))
+    ax_scatter.text(
+        0.025, 0.96, f"{reversal_count}/{len(synthetic)} mean sign reversals",
+        transform=ax_scatter.transAxes, color=ORANGE,
+        fontsize=10.7, weight="bold", va="top",
+    )
 
     relation_handles = [
         plt.Line2D(
@@ -590,7 +654,7 @@ def figure3(synthetic: pd.DataFrame) -> list[Path]:
             markerfacecolor=color,
             markeredgecolor="white",
             label=relation_label[relation],
-            markersize=7.5,
+            markersize=7,
         )
         for relation, color in relation_color.items()
     ]
@@ -603,52 +667,58 @@ def figure3(synthetic: pd.DataFrame) -> list[Path]:
             markerfacecolor="#555B62",
             markeredgecolor="white",
             label=quality.title(),
-            markersize=6.5,
+            markersize=7,
         )
         for quality, marker in quality_marker.items()
     ]
-    ax_scatter.legend(
-        handles=quality_handles,
-        frameon=False,
-        title="Score quality",
-        loc="upper right",
-        ncol=3,
-        fontsize=7.2,
-        title_fontsize=7.4,
-        columnspacing=0.7,
-        handletextpad=0.3,
+    for ypos, heading, handles in [
+        (0.428, "Higher risk:", relation_handles),
+        (0.384, "Score quality:", quality_handles),
+    ]:
+        fig.text(0.085, ypos, heading, fontsize=10.7, weight="bold", va="center")
+        fig.legend(
+            handles=handles, frameon=False, loc="center left",
+            bbox_to_anchor=(0.26, ypos), ncol=3, borderaxespad=0,
+            columnspacing=1.6, handletextpad=0.4, handlelength=1.0,
+        )
+    fig.text(
+        0.98, 0.384, "Equal size across q", ha="right", va="center",
+        fontsize=10.7, color=INK,
+    )
+    fig.text(
+        0.085, 0.339,
+        "Shading: positive joint / negative fixed-budget contrast.",
+        fontsize=10.7, color=INK, va="center",
     )
 
     high_access = synthetic[
         synthetic["availability_relation"] == "higher_risk_more_available"
     ].copy()
-    qualities = ["good", "medium", "weak"]
-    availability = [0.5, 0.7, 0.9]
-    fractions = [0.05, 0.10, 0.20]
-    matrix = np.zeros((9, 3))
-    row_labels = []
-    for row_index, (quality, fraction_available) in enumerate(
-        [(quality, fraction_available) for quality in qualities for fraction_available in availability]
-    ):
-        row_labels.append(f"{quality.title()} {int(100 * fraction_available)}%")
-        for column_index, q in enumerate(fractions):
-            match = high_access[
-                (high_access["model_quality"] == quality)
-                & np.isclose(high_access["availability_target_fraction"], fraction_available)
-                & np.isclose(high_access["nominal_fraction"], q)
-            ]
-            if len(match) != 1:
-                raise ValueError("Synthetic heatmap key is not unique")
-            matrix[row_index, column_index] = 100 * match.iloc[0]["sign_reversal_replicate_fraction"]
+    qualities = SYNTHETIC_LEVELS["model_quality"]
+    availability = SYNTHETIC_LEVELS["availability_target_fraction"]
+    fractions = SYNTHETIC_LEVELS["nominal_fraction"]
+    columns = pd.MultiIndex.from_product(
+        [qualities, availability], names=["model_quality", "availability_target_fraction"]
+    )
+    heat_data = high_access.pivot(
+        index="nominal_fraction",
+        columns=["model_quality", "availability_target_fraction"],
+        values="sign_reversal_replicate_fraction",
+    ).reindex(index=fractions, columns=columns)
+    matrix = 100 * heat_data.to_numpy()
+    if matrix.shape != (3, 9) or not np.isfinite(matrix).all():
+        raise ValueError("Synthetic heatmap must contain all 27 high-risk-available conditions")
 
     cmap = LinearSegmentedColormap.from_list(
         "reversal",
         ["#F6F7F8", "#F8D6C4", "#E88D5A", ORANGE],
     )
     image = ax_heat.imshow(matrix, cmap=cmap, vmin=0, vmax=100, aspect="auto")
-    ax_heat.set_xticks(range(3), ["q=5%", "q=10%", "q=20%"])
-    ax_heat.set_yticks(range(9), row_labels)
-    ax_heat.tick_params(length=0, pad=5)
+    ax_heat.set_xticks(range(len(columns)), [f"{100 * a:.0f}" for _, a in columns])
+    ax_heat.set_yticks(range(len(fractions)), [f"{100 * q:.0f}%" for q in fractions])
+    ax_heat.set_ylabel("Top fraction q")
+    ax_heat.set_xlabel("Availability within score-quality group (%)", labelpad=5)
+    ax_heat.tick_params(length=0, pad=4)
     for row in range(matrix.shape[0]):
         for column in range(matrix.shape[1]):
             value = matrix[row, column]
@@ -658,34 +728,30 @@ def figure3(synthetic: pd.DataFrame) -> list[Path]:
                 f"{value:.0f}%",
                 ha="center",
                 va="center",
-                fontsize=8.7,
+                fontsize=10.7,
                 weight="bold",
                 color="white" if value >= 65 else INK,
             )
     for separator in [2.5, 5.5]:
-        ax_heat.axhline(separator, color="white", linewidth=3)
+        ax_heat.axvline(separator, color="white", linewidth=3)
+    for separator in [0.5, 1.5]:
+        ax_heat.axhline(separator, color="white", linewidth=0.7)
+    for index, quality in enumerate(qualities):
+        ax_heat.text(
+            (index + 0.5) / len(qualities), 1.12, quality.title(),
+            transform=ax_heat.transAxes, ha="center", va="bottom",
+            fontsize=10.7, weight="bold",
+        )
     for spine in ax_heat.spines.values():
         spine.set_visible(False)
-    ax_heat.set_title(
-        "(b) Reversals when higher risk is more available",
-        loc="left",
-        weight="bold",
+    fig.text(
+        0.085, 0.285, "(c) Reversal frequency: higher risk more available",
+        fontsize=12, weight="bold", va="bottom",
     )
-    cbar = fig.colorbar(image, ax=ax_heat, fraction=0.045, pad=0.025)
-    cbar.set_label("Reversal frequency (%)")
+    cbar = fig.colorbar(image, cax=ax_colorbar, ticks=[0, 50, 100])
+    cbar.set_label("Frequency (%)", fontsize=10.7)
+    cbar.ax.tick_params(labelsize=10.7, length=2, pad=2)
     cbar.outline.set_visible(False)
-
-    fig.legend(
-        handles=relation_handles,
-        frameon=False,
-        loc="lower center",
-        bbox_to_anchor=(0.50, 0.012),
-        ncol=3,
-        fontsize=8.7,
-        columnspacing=1.0,
-        handletextpad=0.35,
-    )
-    fig.subplots_adjust(left=0.075, right=0.985, top=0.88, bottom=0.22, wspace=0.34)
     return save(fig, "figure3_synthetic_stress_test")
 
 
@@ -699,6 +765,9 @@ def write_manifest(inputs: list[Path], outputs: list[Path], frames: dict[str, pd
             "shapley_rows": int(len(shapley)),
             "bootstrap_rows": int(len(frames["bootstrap"])),
             "synthetic_conditions": int(len(synthetic)),
+            "synthetic_unique_keys": int(
+                len(synthetic.drop_duplicates(list(SYNTHETIC_LEVELS)))
+            ),
             "mean_sign_reversals": int(synthetic["naive_fixed_budget_sign_reversal"].sum()),
             "robust_negative_fixed_budget_conditions": int(
                 synthetic["fixed_budget_interval_below_zero"].sum()
@@ -713,6 +782,18 @@ def write_manifest(inputs: list[Path], outputs: list[Path], frames: dict[str, pd
                 )
             ),
         },
+        "figure3": {
+            "zoom_x_pp": list(ZOOM_X),
+            "zoom_y_pp": list(ZOOM_Y),
+            "zoom_conditions": int((
+                (100 * synthetic["mean_availability_effect_at_all_budget"]).between(*ZOOM_X)
+                & (100 * synthetic["mean_naive_top_fraction_effect"]).between(*ZOOM_Y)
+            ).sum()),
+            "heatmap_shape": [3, 9],
+            "scatter_color": "availability_relation",
+            "scatter_shape": "model_quality",
+            "scatter_size": "constant; nominal fraction not encoded",
+        },
     }
     (DATA / "figure_manifest.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8"
@@ -725,6 +806,7 @@ def main() -> None:
     outputs: list[Path] = []
     figure1_outputs, _ = figure1(frames["shapley"])
     outputs.extend(figure1_outputs)
+    outputs.append(DATA / "figure1_headline_data.csv")
     outputs.extend(figure3(frames["synthetic"]))
 
     inputs = [
