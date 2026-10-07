@@ -1,9 +1,7 @@
 """Reconstruct canonical CDC 2022/2023 CSVs from official fixed-width US files.
 
-The legacy extractor is deliberately unchanged. Coordinates come from the
-independent 2022 raw audit and plurality parser; the shared coordinates were
-checked against the 2023 User Guide. All value/target rules are delegated to
-the existing canonical harmonizer, not reimplemented here.
+Coordinates, missing codes, and target definitions are shared in cdc_schema.
+Output bytes must match the canonical release before a directory is published.
 """
 
 from __future__ import annotations
@@ -18,9 +16,7 @@ import tempfile
 
 import yaml
 
-import add_plurality_cdc2022 as plurality
-import audit_cdc_2022_raw_coordinates as raw_audit
-import preprocess_harmonize_cdc_2022_2023 as harmonizer
+import cdc_schema as harmonizer
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -29,22 +25,14 @@ GUIDE_URL = (
     "https://ftp.cdc.gov/pub/Health_Statistics/NCHS/"
     "Dataset_Documentation/DVS/natality/UserGuide{year}.pdf"
 )
-COORDINATES = {
-    spec.canonical_name: (
-        (plurality.DPLURAL_START, plurality.DPLURAL_END)
-        if spec.canonical_name == "plurality"
-        else (raw_audit.FIELD_BY_NAME[spec.source_2022].start,
-              raw_audit.FIELD_BY_NAME[spec.source_2022].end)
-    )
-    for spec in harmonizer.FIELDS
-}
+COORDINATES = harmonizer.COORDINATES
 
 
 def extract_source_row(payload: str, year: int) -> dict[str, str]:
     """Keep raw codes and the harmonizer's year-specific source aliases."""
     if year not in harmonizer.EXPECTED_ROWS:
         raise ValueError("Only the audited 2022 and 2023 layouts are supported")
-    if len(payload) != raw_audit.EXPECTED_RECORD_LENGTH or not payload.isascii():
+    if len(payload) != harmonizer.EXPECTED_RECORD_LENGTH or not payload.isascii():
         raise ValueError("Expected exactly 1330 ASCII characters per record")
     row = {}
     for spec in harmonizer.FIELDS:
@@ -127,14 +115,13 @@ def reconstruct_year(raw_path: Path, output_dir: Path, year: int, *,
             "expected_output_sha256": expected_sha256,
             "canonical_config_sha256": config_sha256,
             "official_layout": GUIDE_URL.format(year=year),
-            "record_length": raw_audit.EXPECTED_RECORD_LENGTH,
+            "record_length": harmonizer.EXPECTED_RECORD_LENGTH,
             "canonical_columns": list(harmonizer.OUTPUT_COLUMNS),
             "source_aliases": {spec.canonical_name: spec.source_name(year) for spec in harmonizer.FIELDS},
             "coordinates_1based_inclusive": COORDINATES,
             "code_sha256": {
                 path.name: harmonizer.sha256_file(path)
-                for path in [Path(__file__), Path(raw_audit.__file__),
-                             Path(plurality.__file__), Path(harmonizer.__file__)]
+                for path in [Path(__file__), Path(harmonizer.__file__)]
             },
             "model_fitting": False,
         }

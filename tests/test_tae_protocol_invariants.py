@@ -1,29 +1,10 @@
 #!/usr/bin/env python3
-"""Fast invariant tests for run_tae_canonical_clearml.py.
-
-These tests do not require CDC data or ClearML. They test the scientific
-selection logic on synthetic data before any expensive remote run.
-"""
+"""Scientific selection invariants evaluated on synthetic data."""
 
 from __future__ import annotations
 
-import importlib.util
-from pathlib import Path
-
 import numpy as np
-
-
-HERE = Path(__file__).resolve()
-CANDIDATES = [
-    HERE.with_name("run_tae_canonical_clearml.py"),
-    HERE.parents[1] / "scripts" / "experiments" / "run_tae_canonical_clearml.py",
-]
-SCRIPT = next((candidate for candidate in CANDIDATES if candidate.is_file()), CANDIDATES[-1])
-spec = importlib.util.spec_from_file_location("tae", SCRIPT)
-if spec is None or spec.loader is None:
-    raise RuntimeError(f"Cannot import {SCRIPT}")
-tae = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(tae)
+import canonical as tae
 
 
 def make_data(n: int = 5000, seed: int = 42):

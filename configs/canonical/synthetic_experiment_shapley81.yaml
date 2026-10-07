@@ -46,8 +46,4 @@ evaluation:
   shapley_design: early_or_all_candidate_set_x_early_or_all_absolute_budget
   shapley_interval: percentile_025_975_across_independent_simulation_replicates
 output:
-  directory: results/tae_2026_synthetic_shapley81
-  overwrite: false
-  save_replicate_level_results: true
-  save_summaries: true
-  save_manifest: true
+  directory: results/local_synthetic

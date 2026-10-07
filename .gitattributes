@@ -1,25 +1,8 @@
-# The submission manifest hashes text files with LF line endings.
-paper/**/*.bib text eol=lf
-paper/**/*.csv text eol=lf
-paper/**/*.json text eol=lf
-paper/**/*.md text eol=lf
-paper/**/*.py text eol=lf
-paper/**/*.sty text eol=lf
-paper/**/*.tex text eol=lf
-paper/**/*.txt text eol=lf
-paper/**/*.yaml text eol=lf
-paper/**/*.yml text eol=lf
-paper/**/*.pdf -text
-paper/**/*.png -text
-
-# These archived submission artifacts were hashed with CRLF endings.
-paper/analysis_code/synthetic_outputs/synthetic_shapley_replicates.csv text eol=crlf
-paper/source_data/figure_manifest.json text eol=crlf
-paper/source_data/figure1_headline_data.csv text eol=crlf
-paper/source_data/sensitivity_no_priorterm.csv text eol=crlf
-paper/source_data/sensitivity_no_race.csv text eol=crlf
-paper/source_data/shapley_bootstrap_replicates.csv text eol=crlf
-paper/tables/*.tex text eol=crlf
-
-# Preserve the corrected replication's byte-hashed run artifacts verbatim.
-paper/source_data/temporal_2024/* -text whitespace=cr-at-eol
+* text=auto eol=lf
+pretrained/** -text !eol whitespace=cr-at-eol
+results/reference/** -text !eol whitespace=cr-at-eol
+tests/fixtures/*.csv -text !eol whitespace=cr-at-eol
+*.pdf -text
+*.png -text
+*.joblib -text
+*.npz -text

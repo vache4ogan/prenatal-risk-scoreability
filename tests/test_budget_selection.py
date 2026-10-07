@@ -1,8 +1,8 @@
 """Invariant: early and full policies use one model and the same absolute top-B budget."""
 
 import numpy as np
-import run_tae_canonical_clearml as canonical
-import run_tae_shapley_fixed_b_bootstrap_clearml as audit
+import canonical as canonical
+import four_cell as audit
 
 
 def test_equal_absolute_budget_selection():

@@ -2,7 +2,7 @@
 
 import pytest
 import numpy as np
-from run_tae_canonical_clearml import availability_masks
+from canonical import availability_masks
 
 
 def test_canonical_care_entry_groups():

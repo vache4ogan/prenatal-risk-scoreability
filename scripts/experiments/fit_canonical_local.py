@@ -1,4 +1,4 @@
-"""Fit the frozen canonical specification using local CDC 2022 data, without ClearML."""
+"""Fit the canonical CPU specification using CDC 2022 training data only."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from lightgbm import LGBMClassifier
 
-import run_tae_canonical_clearml as canonical
+import canonical as canonical
 
 
 def fit_target(frame, train_rows, calibration_rows, target, config, threads=4):
@@ -21,8 +21,9 @@ def fit_target(frame, train_rows, calibration_rows, target, config, threads=4):
     calibration = population & known & calibration_rows
     if np.any(train & calibration):
         raise ValueError("Training/calibration overlap")
-    features = list(canonical.LANDMARK_STRICT_FEATURES)
-    pre = canonical.build_preprocessor(features, ["mother_race"], config["preprocessing"])
+    features = list(config["feature_set"]["features"])
+    pre = canonical.build_preprocessor(features, config["preprocessing"]["categorical_features"],
+                                       config["preprocessing"])
     x = canonical.consistent_matrix(pre.fit_transform(frame.loc[train, features]))
     params = canonical.lightgbm_parameters(config)
     params["n_jobs"] = threads
@@ -34,7 +35,7 @@ def fit_target(frame, train_rows, calibration_rows, target, config, threads=4):
                    "threshold": canonical.threshold_for_capacity(scores, q),
                    "source_year": 2022, "calibration_n": len(scores)}
                   for q in config["evaluation"]["fractions"]]
-    return {"target": target, "feature_set": "landmark_strict", "features": features,
+    return {"target": target, "feature_set": config["feature_set"]["name"], "features": features,
             "preprocessor": pre, "model": model}, thresholds
 
 
@@ -61,7 +62,8 @@ def main():
     for target in canonical.TARGETS:
         print(f"Fitting {target} on CDC 2022 only", flush=True)
         bundle, rows = fit_target(frame, ~calibration, calibration, target, config, args.threads)
-        joblib.dump(bundle, args.output_dir / f"{target}__landmark_strict__lightgbm.joblib")
+        name = config["feature_set"]["name"]
+        joblib.dump(bundle, args.output_dir / f"{target}__{name}__lightgbm.joblib")
         thresholds.extend(rows)
     pd.DataFrame(thresholds).to_csv(args.output_dir / "thresholds_2022.csv", index=False)
     (args.output_dir / "local_training_manifest.json").write_text(json.dumps({
