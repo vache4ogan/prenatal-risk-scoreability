@@ -41,6 +41,7 @@ def verify_files() -> None:
         "references.bib",
         "neurips_2026.sty",
         "checklist.tex",
+        "CODE_LICENSE.txt",
         "generate_figures.py",
         "generate_tables.py",
         "analysis_code/synthetic/run_tae_synthetic_shapley81.py",
@@ -58,6 +59,8 @@ def verify_files() -> None:
         "tables/table_policy_contrasts_q10.tex",
         "tables/table_score_transport.tex",
         "tables/table_three_protocols_q10.tex",
+        "tables/table_temporal_2024.tex",
+        "source_data/temporal_2024/run_manifest.json",
     ]
     missing = [name for name in required if not (ROOT / name).is_file()]
     if missing:
@@ -459,6 +462,9 @@ def verify_latex() -> None:
         r"\input{tables/table_policy_contrasts_q10.tex}",
         r"\input{tables/table_score_transport.tex}",
         r"\input{tables/table_four_cells.tex}",
+        r"\input{tables/table_temporal_2024.tex}",
+        r"\label{sec:temporal_replication}",
+        "https://github.com/vache4ogan/prenatal-risk-scoreability",
         r"\input{checklist}",
         "Vache Oganisyan", "Dmitry Lvov", "Ilya Pershin",
         "v.oganisian@innopolis.university", "d.lvov@innopolis.ru",
@@ -528,8 +534,8 @@ def verify_latex() -> None:
     page_text = [page.extract_text() or "" for page in pdf.pages]
     reference_pages = [index for index, text_page in enumerate(page_text) if "References" in text_page]
     conclusion_pages = [index for index, text_page in enumerate(page_text) if "Conclusion" in text_page]
-    if not reference_pages or not (1 <= min(reference_pages) <= 8):
-        fail("Main text exceeds the workshop's eight-page limit")
+    if not reference_pages or not (1 <= min(reference_pages) <= 10):
+        fail("Main text exceeds the workshop's ten-page camera-ready limit")
     if not conclusion_pages or min(conclusion_pages) >= min(reference_pages):
         fail("Conclusion must appear before References")
     for name in ["Vache Oganisyan", "Dmitry Lvov", "Ilya Pershin",

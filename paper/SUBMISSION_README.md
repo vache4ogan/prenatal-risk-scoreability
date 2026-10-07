@@ -14,6 +14,7 @@ This package accompanies the accepted poster paper "Same Top Fraction, Different
 - `verify_submission.py`: numerical, citation, layout, and manuscript-claim checks.
 - `verify_synthetic_rerun.py`: comparison of a fresh simulation against all 81 archived condition summaries and 8,100 replicate rows.
 - `PACKAGE_SHA256.txt`: byte-level checksums of the delivery package.
+- `CODE_LICENSE.txt`: MIT License for the authors' code and software documentation, not a relicensing of the article, figures, research data, or third-party style files.
 
 The package contains no individual-level Natality records, fitted clinical model, or internal service address. CDC Natality public-use files are available from the NCHS Vital Statistics Online portal and remain subject to the NCHS Data User Agreement.
 
@@ -25,7 +26,7 @@ Create an environment with Python 3.9 or newer, install `requirements_anonymous.
 python verify_submission.py
 ```
 
-This checks every archived checksum, all reported numerical invariants, the synthetic parameter specification, author information, and the eight-page main-text limit. The official NeurIPS 2026 style is unmodified; its SHA-256 is `c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a`.
+This checks every archived checksum, all reported numerical invariants, the synthetic parameter specification, author information, and the ten-page camera-ready main-text limit. The official NeurIPS 2026 style is unmodified; its SHA-256 is `c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a`. Requirements were checked against https://tai-eval.github.io/ on 7 October 2026: up to 10 content pages, references and appendices excluded; camera-ready deadline 31 October 2026 AoE.
 
 ## Regenerate the manuscript artifacts
 
@@ -52,4 +53,4 @@ The output directory must be new; choose another directory or explicitly use `--
 
 The aggregate CDC audit, feature sensitivities, corrected CDC 2024 four-cell replication, and every manuscript figure and table can be checked from this package. The camera-ready preparation independently replayed the frozen models on CDC 2023, reproducing all 24 four-cell point estimates exactly, and completed the same audit on CDC 2024 with 500 paired resamples per outcome. The reviewed 2024 threshold-only calculation used strings for numeric race codes; its results are superseded by the corrected replication. `replication_2024_results.csv` now uses full-precision 2022 thresholds. Both threshold precisions remain in `temporal_2024/threshold_transport.csv`.
 
-For raw-data reconstruction and local fitting without ClearML, use the repository at https://github.com/vache4ogan/prenatal-risk-scoreability and its `requirements-replication.txt`, `scripts/preprocessing/`, `scripts/experiments/fit_canonical_local.py`, and `scripts/experiments/run_temporal_four_cell.py`. A complete raw-file-to-training rerun was not performed during camera-ready preparation; frozen-model replay and aggregate/synthetic regeneration were performed. Repository visibility is controlled by its owner and public release is pending.
+For raw-data reconstruction and local fitting without ClearML, use the public repository at https://github.com/vache4ogan/prenatal-risk-scoreability and its `requirements-replication.txt`, `scripts/preprocessing/`, `scripts/experiments/fit_canonical_local.py`, and `scripts/experiments/run_temporal_four_cell.py`. The camera-ready sources are on branch `camera-ready-2026-09-24`; the reviewed version is retained as tag `tae-2026-submitted`. A complete raw-file-to-training rerun was not performed during camera-ready preparation; frozen-model replay and aggregate/synthetic regeneration were performed. Code is released under the MIT License with the three authors credited; CDC data terms and the paper's license are separate.

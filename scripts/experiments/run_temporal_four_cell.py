@@ -34,6 +34,28 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def load_thresholds(path: Path) -> pd.DataFrame:
+    frame = pd.read_csv(path)
+    required = {"target", "nominal_fraction", "threshold"}
+    if not required.issubset(frame.columns):
+        raise ValueError(f"Threshold CSV requires columns: {sorted(required)}")
+    frame = frame.copy()
+    for column in ["nominal_fraction", "threshold"]:
+        frame[column] = pd.to_numeric(frame[column], errors="raise")
+    expected = {(target, q) for target in TARGETS for q in [0.05, 0.1]}
+    observed = set(zip(frame.target, frame.nominal_fraction))
+    if len(frame) != len(expected) or observed != expected:
+        raise ValueError("Threshold CSV must contain exactly one row per target and fraction (0.05, 0.1)")
+    if not np.isfinite(frame.threshold).all() or not frame.threshold.between(0, 1).all():
+        raise ValueError("Thresholds must be finite probabilities in [0, 1]")
+    for column in ["source_year", "threshold_source_year"]:
+        if column in frame and not pd.to_numeric(frame[column], errors="raise").eq(2022).all():
+            raise ValueError("Thresholds must come from CDC 2022 calibration")
+    if "comparator" in frame and not frame.comparator.eq(">=").all():
+        raise ValueError("Threshold comparator must be >=")
+    return frame
+
+
 def normalize_frame(frame: pd.DataFrame) -> pd.DataFrame:
     frame = frame.copy()
     numeric = set(audit.LANDMARK_STRICT_FEATURES) | {
@@ -114,11 +136,13 @@ def main():
     started = time.time()
     if args.bootstrap_replicates < 0:
         raise ValueError("Negative replicate count")
+    threshold_frame = load_thresholds(args.thresholds)
     observed_hash = sha256(args.csv)
     if observed_hash != args.expected_sha256:
         raise ValueError("Input CSV hash mismatch")
     args.output_dir.mkdir(parents=True, exist_ok=False)
     manifest = {"status": "running", "year": args.year, "input_sha256": observed_hash,
+                "thresholds_sha256": sha256(args.thresholds),
                 "script_sha256": sha256(Path(__file__)),
                 "audit_module_sha256": sha256(Path(audit.__file__)),
                 "bootstrap_replicates": args.bootstrap_replicates, "seed": args.seed,
@@ -133,7 +157,6 @@ def main():
     extra = set(TARGETS) if args.year == 2023 else {"gestation_oe_weeks", "birth_weight_g", "admit_nicu"}
     print("Reading and validating numeric inputs", flush=True)
     frame = normalize_frame(pd.read_csv(args.csv, usecols=sorted(required | extra), low_memory=False))
-    threshold_frame = pd.read_csv(args.thresholds)
     cells, decompositions, replicas, threshold_rows = [], [], [], []
     population = audit.resident_singleton_mask(frame)
     for index, target in enumerate(TARGETS):

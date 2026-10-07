@@ -66,8 +66,8 @@
 
 \item {\bf Open access to data and code}
     \item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
-    \item[] Answer: \answerNo{}
-    \item[] Justification: CDC Natality public-use files and official layouts are openly accessible. Code, aggregate artifacts, configurations, and reproduction instructions will be publicly released with the camera-ready version at \url{https://github.com/vache4ogan/prenatal-risk-scoreability}. The source package already contains the manuscript generators, synthetic experiment, and verification scripts. Repository access is pending the owner's visibility change.
+    \item[] Answer: \answerYes{}
+    \item[] Justification: CDC Natality public-use files and official layouts are openly accessible. The public repository at \url{https://github.com/vache4ogan/prenatal-risk-scoreability} provides code, configurations, aggregate results, and separate instructions for aggregate verification, synthetic reruns, and reconstruction from user-downloaded CDC files. The source package regenerates every manuscript figure and table. Appendix~D states the validation scope; individual records and fitted clinical models are not redistributed.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that paper does not include experiments requiring code.
@@ -112,7 +112,7 @@
 \item {\bf Experiments compute resources}
     \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: All runs are CPU-only; a multicore worker with 16~GB RAM is sufficient. Archived wall times are approximately 26 minutes for the canonical analysis, 2.5 minutes for the four-cell bootstrap, 18--21 minutes per feature ablation, and 20 seconds for the synthetic grid.
+    \item[] Justification: Appendix~D reports the CPU and RAM of the verification machine, thread count, wall times for the frozen-score replications and full synthetic rerun, and archived analysis timings. All reported experiments are CPU-based. Original training-worker hardware and total exploratory compute were not retained and are distinguished from the measured verification runs.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -162,7 +162,7 @@
 \item {\bf Licenses for existing assets}
     \item[] Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Section~3 and Appendix~D cite the NCHS Data User Agreement and the LightGBM MIT License. The package redistributes only derived aggregate results.
+    \item[] Justification: Section~3 and Appendix~D cite the NCHS Data User Agreement and the LightGBM MIT License. The repository states the MIT License for the authors' code separately from CDC data terms and the paper's license. The package redistributes only derived aggregate results.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not use existing assets.

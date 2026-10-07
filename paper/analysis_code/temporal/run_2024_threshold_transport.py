@@ -31,17 +31,20 @@ def build_targets(frame: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
-def load_cutoffs(path: Path) -> dict[str, tuple[float, float]]:
+def load_cutoffs(path: Path) -> dict[str, float]:
     rows = pd.read_csv(path)
     rows = rows[
         (rows["protocol"] == "fixed_calibration_threshold")
         & np.isclose(rows["nominal_fraction"], 0.10)
         & (rows["availability_scenario"] == "all_record_upper_bound")
     ]
-    if set(rows["target"]) != set(TARGETS):
-        raise ValueError("Canonical q=10% threshold rows are incomplete")
+    if len(rows) != len(TARGETS) or set(rows["target"]) != set(TARGETS):
+        raise ValueError("Canonical q=10% threshold rows must contain each target exactly once")
+    thresholds = pd.to_numeric(rows["threshold"], errors="raise")
+    if not np.isfinite(thresholds).all() or not thresholds.between(0, 1).all():
+        raise ValueError("Canonical thresholds must be finite probabilities")
     return {
-        row.target: (float(row.threshold), round(float(row.threshold), 6))
+        row.target: float(row.threshold)
         for row in rows.itertuples(index=False)
     }
 
@@ -58,10 +61,10 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
+    cutoffs = load_cutoffs(args.canonical_results)
     frame = build_targets(pd.read_csv(args.data, low_memory=False))
     frame["is_us_resident"] = pd.to_numeric(frame["is_us_resident"], errors="coerce")
     frame["is_singleton"] = pd.to_numeric(frame["is_singleton"], errors="coerce")
-    cutoffs = load_cutoffs(args.canonical_results)
     results: list[dict[str, object]] = []
 
     for target in TARGETS:
@@ -80,7 +83,7 @@ def main() -> None:
 
         transformed = bundle["preprocessor"].transform(evaluation[features]).astype(np.float32)
         scores = bundle["model"].predict_proba(transformed)[:, 1]
-        canonical_threshold, threshold_used = cutoffs[target]
+        canonical_threshold = threshold_used = cutoffs[target]
         selected = scores >= threshold_used
         outcomes = evaluation[target].astype(int).to_numpy()
 
@@ -95,7 +98,7 @@ def main() -> None:
                 "threshold_source_year": 2022,
                 "nominal_fraction": 0.10,
                 "canonical_threshold_exact": canonical_threshold,
-                "threshold_used_6dp": threshold_used,
+                "threshold_used": threshold_used,
                 "N_all": n_all,
                 "E_all": e_all,
                 "prevalence": e_all / n_all,
