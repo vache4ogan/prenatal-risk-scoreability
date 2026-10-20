@@ -774,8 +774,6 @@ def run_experiment(config: Mapping[str, Any], output_dir: Path) -> Dict[str, Any
                     threshold = float(score_cal[cal_order[k_cal - 1]])
                 thresholds[q] = (threshold, k_cal)
 
-            full_event_cumsum = np.cumsum(y[full_order], dtype=np.int64)
-
             for target_fraction in availability_fractions:
                 for assoc in availability_associations:
                     available_mask = availability_masks[(target_fraction, assoc.name)]
@@ -786,10 +784,6 @@ def run_experiment(config: Mapping[str, Any], output_dir: Path) -> Dict[str, Any
                     # Filtering a globally sorted order is equivalent to sorting
                     # only the eligible records, but much faster for 100k x 100 runs.
                     available_order = full_order[available_mask[full_order]]
-                    available_event_cumsum = np.cumsum(
-                        y[available_order], dtype=np.int64
-                    )
-
                     for q in q_values:
                         b_available = round_budget(q, available_n)
                         b_all = round_budget(q, n_eval)

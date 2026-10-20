@@ -7,7 +7,7 @@ TARGETS = ("target_preterm", "target_nicu", "target_lbw")
 
 
 def load_cutoffs(path: Path) -> dict[str, float]:
-    rows = pd.read_csv(path)
+    rows = pd.read_csv(path, float_precision="round_trip")
     rows = rows[
         (rows["protocol"] == "fixed_calibration_threshold")
         & np.isclose(rows["nominal_fraction"], 0.10)
