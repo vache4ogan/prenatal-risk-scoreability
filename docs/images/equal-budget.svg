@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="398" viewBox="0 0 960 398" role="img" aria-labelledby="title description">
+  <title id="title">A fixed workload changes the measured capture gain</title>
+  <desc id="description">CDC Natality 2023, nominal top 10%. Point estimates of gains in population event capture, in percentage points, comparing early-entry eligibility with the retrospective all-record upper bound. Grey bars use the same top fraction within each candidate set. Teal bars use the same absolute selected count, fixed at the larger full-cohort budget. All differences use the full-population event denominator.</desc>
+  <rect width="960" height="398" fill="#ffffff"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#17343d">
+    <text x="28" y="36" font-size="24" font-weight="700">A fixed workload changes the measured capture gain</text>
+    <text x="28" y="61" font-size="14" fill="#52656b">CDC Natality 2023 | Nominal top 10% | Gain in captured events, percentage points</text>
+    <rect x="28" y="82" width="12" height="12" fill="#849399"/>
+    <text x="48" y="93" font-size="13">Top 10% within each candidate set</text>
+    <rect x="330" y="82" width="12" height="12" fill="#087f82"/>
+    <text x="350" y="93" font-size="13">Same count: 10% of the full cohort</text>
+    <line x1="230" x2="230" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="230" y="115" text-anchor="middle" font-size="11" fill="#52656b">0</text>
+    <line x1="292" x2="292" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="292" y="115" text-anchor="middle" font-size="11" fill="#52656b">1</text>
+    <line x1="354" x2="354" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="354" y="115" text-anchor="middle" font-size="11" fill="#52656b">2</text>
+    <line x1="416" x2="416" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="416" y="115" text-anchor="middle" font-size="11" fill="#52656b">3</text>
+    <line x1="478" x2="478" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="478" y="115" text-anchor="middle" font-size="11" fill="#52656b">4</text>
+    <line x1="540" x2="540" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="540" y="115" text-anchor="middle" font-size="11" fill="#52656b">5</text>
+    <line x1="602" x2="602" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="602" y="115" text-anchor="middle" font-size="11" fill="#52656b">6</text>
+    <line x1="664" x2="664" y1="122" y2="318" stroke="#e4eaec"/>
+    <text x="664" y="115" text-anchor="middle" font-size="11" fill="#52656b">7</text>
+    <g id="target_preterm" data-same-fraction-pp="5.668958188256804" data-equal-budget-pp="2.4049425579453527">
+      <text x="28" y="150" font-size="16" font-weight="700">Preterm birth</text>
+      <rect data-series="same-fraction" x="230" y="128" width="351.475" height="16" fill="#849399"/>
+      <text x="589.475" y="141" font-size="14" fill="#52656b">+5.67</text>
+      <rect data-series="equal-budget" x="230" y="151" width="149.106" height="16" fill="#087f82"/>
+      <text x="387.106" y="164" font-size="14" font-weight="700" fill="#087f82">+2.40</text>
+    </g>
+    <g id="target_nicu" data-same-fraction-pp="5.588472888537183" data-equal-budget-pp="2.321578713091646">
+      <text x="28" y="224" font-size="16" font-weight="700">NICU admission</text>
+      <rect data-series="same-fraction" x="230" y="202" width="346.485" height="16" fill="#849399"/>
+      <text x="584.485" y="215" font-size="14" fill="#52656b">+5.59</text>
+      <rect data-series="equal-budget" x="230" y="225" width="143.938" height="16" fill="#087f82"/>
+      <text x="381.938" y="238" font-size="14" font-weight="700" fill="#087f82">+2.32</text>
+    </g>
+    <g id="target_lbw" data-same-fraction-pp="6.7705598582305075" data-equal-budget-pp="2.9309694145445016">
+      <text x="28" y="298" font-size="16" font-weight="700">Low birth weight</text>
+      <rect data-series="same-fraction" x="230" y="276" width="419.775" height="16" fill="#849399"/>
+      <text x="657.775" y="289" font-size="14" fill="#52656b">+6.77</text>
+      <rect data-series="equal-budget" x="230" y="299" width="181.720" height="16" fill="#087f82"/>
+      <text x="419.720" y="312" font-size="14" font-weight="700" fill="#087f82">+2.93</text>
+    </g>
+    <text x="766" y="197" font-size="34" font-weight="700" fill="#087f82">57-58%</text>
+    <text x="766" y="222" font-size="16" font-weight="700">smaller gains</text>
+    <text x="766" y="244" font-size="13" fill="#52656b">at the larger fixed</text>
+    <text x="766" y="262" font-size="13" fill="#52656b">selection budget</text>
+    <line x1="28" x2="932" y1="338" y2="338" stroke="#e4eaec"/>
+    <text x="28" y="361" font-size="12" fill="#52656b">Frozen 2022 LightGBM scores | Early entry vs retrospective all-record upper bound</text>
+    <text x="28" y="381" font-size="12" fill="#52656b">Point estimates; the same full-population event denominator is used in both contrasts.</text>
+  </g>
+</svg>

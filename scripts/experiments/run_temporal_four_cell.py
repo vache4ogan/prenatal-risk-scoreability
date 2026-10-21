@@ -30,7 +30,7 @@ def sha256(path: Path) -> str:
 
 
 def load_thresholds(path: Path) -> pd.DataFrame:
-    frame = pd.read_csv(path)
+    frame = pd.read_csv(path, float_precision="round_trip")
     required = {"target", "nominal_fraction", "threshold"}
     if not required.issubset(frame.columns):
         raise ValueError(f"Threshold CSV requires columns: {sorted(required)}")
@@ -85,7 +85,7 @@ def validate_bundle_thresholds(bundle, rows):
                 for row in rows.to_dict("records")}
     expected = {float(q): float(t) for q, t in bundle["thresholds"].items()}
     if supplied.keys() != expected.keys() or any(
-        not np.isclose(supplied[q], expected[q], rtol=0, atol=1e-15) for q in expected
+        supplied[q] != expected[q] for q in expected
     ):
         raise ValueError("Cutoffs do not match the native model's full-precision calibration thresholds")
 
